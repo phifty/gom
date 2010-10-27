@@ -1,0 +1,6 @@
+
+= General Object Mapper
+
+== Development
+
+GOM is still in an early phase of development. Any bug report and contribution is welcome!
