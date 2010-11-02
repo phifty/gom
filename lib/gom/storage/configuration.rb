@@ -5,6 +5,7 @@ module GOM
 
   module Storage
 
+    # Stores all information to configure a storage
     class Configuration
 
       attr_reader :adapter_class

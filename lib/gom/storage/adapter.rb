@@ -3,6 +3,7 @@ module GOM
 
   module Storage
 
+    # Base class for a storage adapter
     class Adapter
 
       def initialize(configuration)
