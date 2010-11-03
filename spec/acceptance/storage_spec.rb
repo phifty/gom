@@ -37,9 +37,7 @@ describe "storage" do
           :number => 11
         }
       }).and_return("house_2")
-      id = GOM::Storage.store "test_storage", @house
-      id.should == "test_storage:house_2"
-      @house.id.should == "test_storage:house_2"
+      GOM::Storage.store "test_storage", @house
     end
 
     it "should return the right id" do
@@ -48,8 +46,33 @@ describe "storage" do
     end
 
     it "should set the object's id" do
-      id = GOM::Storage.store "test_storage", @house
+      GOM::Storage.store "test_storage", @house
       @house.id.should == "test_storage:house_2"
+    end
+
+  end
+
+  describe "removing an object" do
+
+    before :each do
+      @house = House.new
+      @house.id = "test_storage:house_3"
+      @house.number = 11
+    end
+
+    it "should remove the object" do
+      GOM::Storage::Configuration[:test_storage].adapter.should_receive(:remove).with("house_3")
+      GOM::Storage.remove @house
+    end
+
+    it "should remove the object identified by the id" do
+      GOM::Storage::Configuration[:test_storage].adapter.should_receive(:remove).with("house_3")
+      GOM::Storage.remove "test_storage:house_3"
+    end
+
+    it "should remove the object's id" do
+      GOM::Storage.remove @house
+      @house.id.should be_nil
     end
 
   end

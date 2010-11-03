@@ -3,7 +3,7 @@ module GOM
 
   module Storage
 
-    # Stores an object to the storage
+    # Stores an object to the storage.
     class Saver
 
       attr_reader :id

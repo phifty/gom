@@ -36,4 +36,14 @@ describe GOM::Storage::Adapter do
 
   end
 
+  describe "remove" do
+
+    it "should raise a NotImplementedError" do
+      lambda do
+        @adapter.remove
+      end.should raise_error(NotImplementedError)
+    end
+
+  end
+
 end

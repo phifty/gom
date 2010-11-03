@@ -7,6 +7,7 @@ module GOM
     autoload :Adapter, File.join(File.dirname(__FILE__), "storage", "adapter")
     autoload :Fetcher, File.join(File.dirname(__FILE__), "storage", "fetcher")
     autoload :Saver, File.join(File.dirname(__FILE__), "storage", "saver")
+    autoload :Remover, File.join(File.dirname(__FILE__), "storage", "remover")
 
     def self.fetch(id, object = nil)
       fetcher = Fetcher.new id, object
@@ -18,6 +19,11 @@ module GOM
       saver = Saver.new storage_name, object
       saver.perform
       saver.id
+    end
+
+    def self.remove(object_or_id)
+      remover = Remover.new object_or_id
+      remover.perform
     end
 
   end

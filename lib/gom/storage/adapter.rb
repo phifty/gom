@@ -18,6 +18,10 @@ module GOM
         not_implemented "store"
       end
 
+      def remove
+        not_implemented "remove"
+      end
+
       private
 
       def not_implemented(method_name)

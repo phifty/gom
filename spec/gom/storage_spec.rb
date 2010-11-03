@@ -49,4 +49,20 @@ describe GOM::Storage do
 
   end
 
+  describe "remove" do
+
+    before :each do
+      @object = Test.new
+      @remover = Object.new
+      @remover.stub!(:perform)
+      GOM::Storage::Remover.stub!(:new).and_return(@remover)
+    end
+
+    it "should perform a remove" do
+      @remover.should_receive(:perform)
+      GOM::Storage.remove @object
+    end
+
+  end
+
 end

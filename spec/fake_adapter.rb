@@ -18,6 +18,10 @@ class FakeAdapter < GOM::Storage::Adapter
     "house_2"
   end
 
+  def remove(id)
+
+  end
+
 end
 
 GOM::Storage::Adapter.register :fake_adapter, FakeAdapter
