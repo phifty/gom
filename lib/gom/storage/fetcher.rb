@@ -17,9 +17,9 @@ module GOM
 
       def perform
         select_adapter
-        fetch_result
+        fetch_object_hash
         initialize_object unless @object
-        inject_result
+        inject_object_hash
       end
 
       private
@@ -28,17 +28,17 @@ module GOM
         @adapter = GOM::Storage::Configuration[@storage_name].adapter
       end
 
-      def fetch_result
-        @result = @adapter.fetch @object_id
-        @result[:id] = @id
+      def fetch_object_hash
+        @object_hash = @adapter.fetch @object_id
+        @object_hash[:id] = @id
       end
 
       def initialize_object
-        @object = Object.const_get(@result[:class].to_sym).new
+        @object = Object.const_get(@object_hash[:class].to_sym).new
       end
 
-      def inject_result
-        injector = GOM::Object::Injector.new @object, @result
+      def inject_object_hash
+        injector = GOM::Object::Injector.new @object, @object_hash
         injector.perform
         @object = injector.object
       end

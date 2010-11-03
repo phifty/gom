@@ -23,4 +23,25 @@ describe "storage" do
 
   end
 
+  describe "storing an object" do
+
+    before :each do
+      @house = House.new
+      @house.number = 11
+    end
+
+    it "should return the correct object" do
+      GOM::Storage::Configuration[:test_storage].adapter.should_receive(:store).with({
+        :class => "House",
+        :properties => {
+          :number => 11
+        }
+      }).and_return("house_2")
+      id = GOM::Storage.store "test_storage", @house
+      id.should == "test_storage:house_2"
+      @house.id.should == "test_storage:house_2"
+    end
+
+  end
+
 end

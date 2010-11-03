@@ -1,22 +1,33 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "spec_helper"))
 
 class Test
-  attr_reader :id
-  attr_reader :test
+
+  attr_accessor :id
+  attr_accessor :test
+
 end
 
 describe GOM::Storage::Fetcher do
 
   before :each do
-    @hash = {
+    @object = Test.new
+    @object.id = "test_storage:house_1"
+    @object.test = "test value"
+    @object_hash = {
       :class => "Test",
       :properties => { :test => "test value" }
     }
+
     @adapter = Object.new
-    @adapter.stub!(:fetch).and_return(@hash)
+    @adapter.stub!(:fetch).and_return(@object_hash)
     @configuration = Object.new
     @configuration.stub!(:adapter).and_return(@adapter)
     GOM::Storage::Configuration.stub!(:[]).and_return(@configuration)
+
+    @injector = Object.new
+    @injector.stub!(:perform)
+    @injector.stub!(:object).and_return(@object)
+    GOM::Object::Injector.stub!(:new).and_return(@injector)
 
     @fetcher = GOM::Storage::Fetcher.new "test_storage:house_1"
   end
@@ -29,19 +40,19 @@ describe GOM::Storage::Fetcher do
     end
 
     it "should fetch the id from the adapter instance" do
-      @adapter.should_receive(:fetch).with("house_1").and_return(@hash)
+      @adapter.should_receive(:fetch).with("house_1").and_return(@object_hash)
       @fetcher.perform
     end
 
     it "should not initialize the object if an instance is given" do
       @fetcher.object = Object.new
+      GOM::Object::Injector.should_receive(:new).with(@fetcher.object, @object_hash).and_return(@injector)
       @fetcher.perform
-      @fetcher.object.should be_instance_of(Object)
     end
 
     it "should initialize the object if not given" do
+      GOM::Object::Injector.should_receive(:new).with(an_instance_of(Test), @object_hash).and_return(@injector)
       @fetcher.perform
-      @fetcher.object.should be_instance_of(Test)
     end
 
     it "should set the object's id" do

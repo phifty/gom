@@ -2,15 +2,36 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "spec_hel
 
 describe GOM::Storage::Adapter do
 
+  before :each do
+    @configuration = Object.new
+    @adapter = GOM::Storage::Adapter.new @configuration
+  end
+
   describe "register" do
 
-    before :each do
-      @adapter_class = GOM::Storage::Adapter
+    it "should register a given adapter with a given id" do
+      GOM::Storage::Adapter.register :test_adapter, @adapter.class
+      GOM::Storage::Adapter[:test_adapter].should == @adapter.class
     end
 
-    it "should register a given adapter with a given id" do
-      GOM::Storage::Adapter.register :test_adapter, @adapter_class
-      GOM::Storage::Adapter[:test_adapter].should == @adapter_class
+  end
+
+  describe "fetch" do
+
+    it "should raise a NotImplementedError" do
+      lambda do
+        @adapter.fetch
+      end.should raise_error(NotImplementedError)
+    end
+
+  end
+
+  describe "store" do
+
+    it "should raise a NotImplementedError" do
+      lambda do
+        @adapter.store
+      end.should raise_error(NotImplementedError)
     end
 
   end

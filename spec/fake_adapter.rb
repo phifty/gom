@@ -9,8 +9,8 @@ class FakeAdapter < GOM::Storage::Adapter
 
   def fetch(id)
     {
-        :class => "House",
-        :properties => PROPERTIES[id]
+      :class => "House",
+      :properties => PROPERTIES[id]
     }
   end
 

@@ -15,7 +15,7 @@ module GOM
       end
 
       def adapter
-        @adapter_class.new self
+        @adapter ||= @adapter_class.new self
       end
 
       def self.read(file_name)
