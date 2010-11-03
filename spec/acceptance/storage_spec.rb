@@ -5,7 +5,7 @@ GOM::Storage::Configuration.read File.join(File.dirname(__FILE__), "..", "storag
 
 class House
 
-  attr_reader :id
+  attr_accessor :id
   attr_accessor :number
 
 end
@@ -30,7 +30,7 @@ describe "storage" do
       @house.number = 11
     end
 
-    it "should return the correct object" do
+    it "should store the object" do
       GOM::Storage::Configuration[:test_storage].adapter.should_receive(:store).with({
         :class => "House",
         :properties => {
@@ -39,6 +39,16 @@ describe "storage" do
       }).and_return("house_2")
       id = GOM::Storage.store "test_storage", @house
       id.should == "test_storage:house_2"
+      @house.id.should == "test_storage:house_2"
+    end
+
+    it "should return the right id" do
+      id = GOM::Storage.store "test_storage", @house
+      id.should == "test_storage:house_2"
+    end
+
+    it "should set the object's id" do
+      id = GOM::Storage.store "test_storage", @house
       @house.id.should == "test_storage:house_2"
     end
 
