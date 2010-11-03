@@ -30,6 +30,10 @@ describe GOM::Storage::Saver do
     @inspector.stub!(:object_hash).and_return(@object_hash)
     GOM::Object::Inspector.stub!(:new).and_return(@inspector)
 
+    @injector = Object.new
+    @injector.stub!(:write_id)
+    GOM::Object::Injector.stub!(:new).and_return(@injector)
+
     @saver = GOM::Storage::Saver.new "test_storage", @object
   end
 
@@ -46,13 +50,13 @@ describe GOM::Storage::Saver do
     end
 
     it "should inspect the object" do
-      GOM::Object::Inspector.should_receive(:new).with(@object).and_return(@inspector)
+      @inspector.should_receive(:perform)
       @saver.perform
     end
 
     it "should set the object's id" do
+      @injector.should_receive(:write_id).with("test_storage:house_2")
       @saver.perform
-      @saver.object.id.should == "test_storage:house_2"
     end
 
     it "should return the object's id" do

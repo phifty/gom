@@ -19,9 +19,12 @@ describe GOM::Storage::Remover do
     GOM::Storage::Configuration.stub!(:[]).and_return(@configuration)
 
     @inspector = Object.new
-    @inspector.stub!(:perform)
-    @inspector.stub!(:object_hash).and_return(@object_hash)
+    @inspector.stub!(:read_id).and_return("test_storage:house_3")
     GOM::Object::Inspector.stub!(:new).and_return(@inspector)
+
+    @injector = Object.new
+    @injector.stub!(:clear_id)
+    GOM::Object::Injector.stub!(:new).and_return(@injector)
 
     @remover = GOM::Storage::Remover.new @object
   end
@@ -39,14 +42,13 @@ describe GOM::Storage::Remover do
     end
 
     it "should inspect the object" do
-      pending "will be needed at the next refactoring"
-      GOM::Object::Inspector.should_receive(:new).with(@object).and_return(@inspector)
+      @inspector.should_receive(:read_id).and_return("test_storage:house_3")
       @remover.perform
     end
 
     it "should set the object's id to nil" do
+      @injector.should_receive(:clear_id)
       @remover.perform
-      @remover.object.id.should be_nil
     end
 
   end

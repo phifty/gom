@@ -19,7 +19,7 @@ module GOM
         select_adapter
         inspect_object
         store_object_hash
-        set_object_id
+        write_object_id
       end
 
       private
@@ -39,8 +39,9 @@ module GOM
         @id = "#{@storage_name}:#{@object_id}"
       end
 
-      def set_object_id
-        @object.instance_variable_set :@id, @id
+      def write_object_id
+        injector = GOM::Object::Injector.new @object
+        injector.write_id @id
       end
 
     end

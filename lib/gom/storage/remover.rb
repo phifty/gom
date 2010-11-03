@@ -14,14 +14,14 @@ module GOM
       def initialize(object_or_id)
         @object, @id = object_or_id.is_a?(String) ?
           [ nil, object_or_id ] :
-          [ object_or_id, object_or_id.instance_variable_get(:@id) ]
-        @storage_name, @object_id = @id.split ":"
+          [ object_or_id, nil ]
       end
 
       def perform
+        read_id
         select_adapter
         remove_object
-        set_object_id_to_nil
+        write_nil_to_object_id
       end
 
       private
@@ -30,12 +30,22 @@ module GOM
         @adapter = GOM::Storage::Configuration[@storage_name].adapter
       end
 
+      def read_id
+        unless @id
+          inspector = GOM::Object::Inspector.new @object
+          @id = inspector.read_id
+        end
+
+        @storage_name, @object_id = @id.split ":"
+      end
+
       def remove_object
         @adapter.remove @object_id
       end
 
-      def set_object_id_to_nil
-        @object.instance_variable_set :@id, nil
+      def write_nil_to_object_id
+        injector = GOM::Object::Injector.new @object
+        injector.clear_id
       end
 
     end
