@@ -1,0 +1,45 @@
+
+module GOM
+
+  module Object
+
+    # Provides a mapping between objects and ids
+    class Mapping
+
+      def initialize
+        @map = { }
+      end
+
+      def put(object, id)
+        @map[object] = id
+      end
+
+      def object_by_id(id)
+        @map.key(id)
+      end
+
+      def id_by_object(object)
+        @map[object]
+      end
+
+      def self.singleton
+        @mapping ||= self.new
+      end
+
+      def self.put(object, id)
+        self.singleton.put object, id
+      end
+
+      def self.object_by_id(id)
+        self.singleton.object_by_id id
+      end
+
+      def self.id_by_object(object)
+        self.singleton.id_by_object object
+      end
+
+    end
+
+  end
+
+end

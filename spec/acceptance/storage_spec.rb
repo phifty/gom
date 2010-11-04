@@ -1,14 +1,8 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "spec_helper"))
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "lib", "gom"))
+require File.join(File.dirname(__FILE__), "model")
 
 GOM::Storage::Configuration.read File.join(File.dirname(__FILE__), "..", "storage.configuration")
-
-class House
-
-  attr_accessor :id
-  attr_accessor :number
-
-end
 
 describe "storage" do
 
