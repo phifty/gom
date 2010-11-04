@@ -18,8 +18,7 @@ module GOM
       def perform
         select_adapter
         fetch_object_hash
-        check_mapping unless @object
-        initialize_object unless @object
+        initialize_object
         inject_object_hash
         set_mapping
       end
@@ -35,12 +34,9 @@ module GOM
         @object_hash[:id] = @id
       end
 
-      def check_mapping
-        @object = GOM::Object::Mapping.object_by_id @id
-      end
-
       def initialize_object
-        @object = Object.const_get(@object_hash[:class].to_sym).new
+        @object = GOM::Object::Mapping.object_by_id @id unless @object
+        @object = Object.const_get(@object_hash[:class].to_sym).new unless @object
       end
 
       def inject_object_hash
