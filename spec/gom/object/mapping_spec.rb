@@ -17,26 +17,44 @@ describe GOM::Object::Mapping do
 
   end
 
-  describe "object_by_id" do
+  describe "with a mapping" do
 
     before :each do
       @mapping.put @object, @id
     end
 
-    it "should return the object to the given id" do
-      @mapping.object_by_id(@id).should == @object
+    describe "object_by_id" do
+
+      it "should return the object to the given id" do
+        @mapping.object_by_id(@id).should == @object
+      end
+
     end
 
-  end
+    describe "id_by_object" do
 
-  describe "id_by_object" do
+      it "should return the id to the given object" do
+        @mapping.id_by_object(@object).should == @id
+      end
 
-    before :each do
-      @mapping.put @object, @id
     end
 
-    it "should return the id to the given object" do
-      @mapping.id_by_object(@object).should == @id
+    describe "remove_by_id" do
+
+      it "should remove the mapping identified by id" do
+        @mapping.remove_by_id @id
+        @mapping.object_by_id(@id).should be_nil
+      end
+
+    end
+
+    describe "remove_by_object" do
+
+      it "should remove the mapping identified by object" do
+        @mapping.remove_by_object @object
+        @mapping.id_by_object(@object).should be_nil
+      end
+
     end
 
   end
@@ -102,6 +120,32 @@ describe GOM::Object::Mapping do
       it "should call id_by_object on the mapping instance" do
         @mapping.should_receive(:id_by_object).with(@object).and_return(@id)
         GOM::Object::Mapping.id_by_object(@object).should == @id
+      end
+
+    end
+
+    describe "remove_by_id" do
+
+      before :each do
+        GOM::Object::Mapping.stub!(:singleton).and_return(@mapping)
+      end
+
+      it "should call remove_by_id on the mapping instance" do
+        @mapping.should_receive(:remove_by_id).with(@id)
+        GOM::Object::Mapping.remove_by_id(@id)
+      end
+
+    end
+
+    describe "remove_by_object" do
+
+      before :each do
+        GOM::Object::Mapping.stub!(:singleton).and_return(@mapping)
+      end
+
+      it "should call remove_by_object on the mapping instance" do
+        @mapping.should_receive(:remove_by_object).with(@object)
+        GOM::Object::Mapping.remove_by_object(@object)
       end
 
     end

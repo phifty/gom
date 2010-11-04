@@ -15,10 +15,9 @@ module GOM
       fetcher.object
     end
 
-    def self.store(storage_name, object)
-      saver = Saver.new storage_name, object
+    def self.store(object, storage_name = nil)
+      saver = Saver.new object, storage_name
       saver.perform
-      saver.id
     end
 
     def self.remove(object_or_id)

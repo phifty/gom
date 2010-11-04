@@ -1,6 +1,5 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "spec_helper"))
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "lib", "gom"))
-require File.join(File.dirname(__FILE__), "model")
 
 GOM::Storage::Configuration.read File.join(File.dirname(__FILE__), "..", "storage.configuration")
 
@@ -9,10 +8,10 @@ describe "storage" do
   describe "fetching an object" do
 
     it "should return the correct object" do
-      house = GOM::Storage.fetch "test_storage:house_1"
-      house.should be_instance_of(House)
-      house.id.should == "test_storage:house_1"
-      house.number.should == 5
+      object = GOM::Storage.fetch "test_storage:object_1"
+      object.should be_instance_of(Object)
+      object.instance_variable_get(:@number).should == 5
+      GOM::Object.id(object).should == "test_storage:object_1"
     end
 
   end
@@ -20,28 +19,33 @@ describe "storage" do
   describe "storing an object" do
 
     before :each do
-      @house = House.new
-      @house.number = 11
+      @object = Object.new
+      @object.instance_variable_set :@number, 11
     end
 
     it "should store the object" do
       GOM::Storage::Configuration[:test_storage].adapter.should_receive(:store).with({
-        :class => "House",
+        :class => "Object",
         :properties => {
           :number => 11
         }
-      }).and_return("house_2")
-      GOM::Storage.store "test_storage", @house
+      }).and_return("object_1")
+      GOM::Storage.store @object, "test_storage"
     end
 
-    it "should return the right id" do
-      id = GOM::Storage.store "test_storage", @house
-      id.should == "test_storage:house_2"
+    it "should use default storage if nothing specified" do
+      GOM::Storage::Configuration[:test_storage].adapter.should_receive(:store).with({
+        :class => "Object",
+        :properties => {
+          :number => 11
+        }
+      }).and_return("object_1")
+      GOM::Storage.store @object
     end
 
     it "should set the object's id" do
-      GOM::Storage.store "test_storage", @house
-      @house.id.should == "test_storage:house_2"
+      GOM::Storage.store @object, "test_storage"
+      GOM::Object.id(@object).should == "test_storage:object_1"
     end
 
   end
@@ -49,24 +53,22 @@ describe "storage" do
   describe "removing an object" do
 
     before :each do
-      @house = House.new
-      @house.id = "test_storage:house_3"
-      @house.number = 11
+      @object = GOM::Storage.fetch "test_storage:object_1"
     end
 
     it "should remove the object" do
-      GOM::Storage::Configuration[:test_storage].adapter.should_receive(:remove).with("house_3")
-      GOM::Storage.remove @house
+      GOM::Storage::Configuration[:test_storage].adapter.should_receive(:remove).with("object_1")
+      GOM::Storage.remove @object
     end
 
     it "should remove the object identified by the id" do
-      GOM::Storage::Configuration[:test_storage].adapter.should_receive(:remove).with("house_3")
-      GOM::Storage.remove "test_storage:house_3"
+      GOM::Storage::Configuration[:test_storage].adapter.should_receive(:remove).with("object_1")
+      GOM::Storage.remove "test_storage:object_1"
     end
 
     it "should remove the object's id" do
-      GOM::Storage.remove @house
-      @house.id.should be_nil
+      GOM::Storage.remove @object
+      GOM::Object.id(@object).should be_nil
     end
 
   end

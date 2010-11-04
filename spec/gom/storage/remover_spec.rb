@@ -1,16 +1,9 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "spec_helper"))
 
-class Test
-
-  attr_accessor :id
-
-end
-
 describe GOM::Storage::Remover do
 
   before :each do
-    @object = Test.new
-    @object.id = "test_storage:house_3"
+    @object = Object.new
 
     @adapter = Object.new
     @adapter.stub!(:remove)
@@ -18,13 +11,8 @@ describe GOM::Storage::Remover do
     @configuration.stub!(:adapter).and_return(@adapter)
     GOM::Storage::Configuration.stub!(:[]).and_return(@configuration)
 
-    @inspector = Object.new
-    @inspector.stub!(:read_id).and_return("test_storage:house_3")
-    GOM::Object::Inspector.stub!(:new).and_return(@inspector)
-
-    @injector = Object.new
-    @injector.stub!(:clear_id)
-    GOM::Object::Injector.stub!(:new).and_return(@injector)
+    GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return("test_storage:object_1")
+    GOM::Object::Mapping.stub!(:remove_by_object)
 
     @remover = GOM::Storage::Remover.new @object
   end
@@ -37,17 +25,19 @@ describe GOM::Storage::Remover do
     end
 
     it "should remove the object with the adapter instance" do
-      @adapter.should_receive(:remove).with("house_3")
+      @adapter.should_receive(:remove).with("object_1")
       @remover.perform
     end
 
-    it "should inspect the object" do
-      @inspector.should_receive(:read_id).and_return("test_storage:house_3")
-      @remover.perform
+    it "should raise an ArugmentError if no mapping for the given object exists" do
+      GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return(nil)
+      lambda do
+        @remover.perform
+      end.should raise_error(ArgumentError)
     end
 
-    it "should set the object's id to nil" do
-      @injector.should_receive(:clear_id)
+    it "should remove the mapping" do
+      GOM::Object::Mapping.should_receive(:remove_by_object).with(@object)
       @remover.perform
     end
 

@@ -26,7 +26,13 @@ module GOM
       end
 
       def self.[](name)
+        @configurations ||= { }
         @configurations[name.to_sym]
+      end
+
+      def self.default
+        @configurations ||= { }
+        @configurations.values.first || raise(StandardError, "No storage configuration loaded!")
       end
 
     end

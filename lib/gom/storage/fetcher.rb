@@ -18,8 +18,10 @@ module GOM
       def perform
         select_adapter
         fetch_object_hash
+        check_mapping unless @object
         initialize_object unless @object
         inject_object_hash
+        set_mapping
       end
 
       private
@@ -33,6 +35,10 @@ module GOM
         @object_hash[:id] = @id
       end
 
+      def check_mapping
+        @object = GOM::Object::Mapping.object_by_id @id
+      end
+
       def initialize_object
         @object = Object.const_get(@object_hash[:class].to_sym).new
       end
@@ -41,6 +47,10 @@ module GOM
         injector = GOM::Object::Injector.new @object, @object_hash
         injector.perform
         @object = injector.object
+      end
+
+      def set_mapping
+        GOM::Object::Mapping.put @object, @id
       end
 
     end

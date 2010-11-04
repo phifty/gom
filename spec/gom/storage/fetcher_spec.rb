@@ -1,20 +1,12 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "spec_helper"))
 
-class Test
-
-  attr_accessor :id
-  attr_accessor :test
-
-end
-
 describe GOM::Storage::Fetcher do
 
   before :each do
-    @object = Test.new
-    @object.id = "test_storage:house_1"
-    @object.test = "test value"
+    @object = Object.new
+    @object.instance_variable_set :@test, "test value"
     @object_hash = {
-      :class => "Test",
+      :class => "Object",
       :properties => { :test => "test value" }
     }
 
@@ -23,6 +15,9 @@ describe GOM::Storage::Fetcher do
     @configuration = Object.new
     @configuration.stub!(:adapter).and_return(@adapter)
     GOM::Storage::Configuration.stub!(:[]).and_return(@configuration)
+
+    GOM::Object::Mapping.stub!(:object_by_id)
+    GOM::Object::Mapping.stub!(:put)
 
     @injector = Object.new
     @injector.stub!(:perform)
@@ -45,24 +40,31 @@ describe GOM::Storage::Fetcher do
     end
 
     it "should not initialize the object if an instance is given" do
-      @fetcher.object = Object.new
-      GOM::Object::Injector.should_receive(:new).with(@fetcher.object, @object_hash).and_return(@injector)
+      object = Object.new
+      @fetcher.object = object
+      GOM::Object::Injector.should_receive(:new).with(object, @object_hash).and_return(@injector)
+      @fetcher.perform
+    end
+
+    it "should check if a mapping exists for the object" do
+      object = Object.new
+      GOM::Object::Mapping.should_receive(:object_by_id).with("test_storage:house_1").and_return(object)
       @fetcher.perform
     end
 
     it "should initialize the object if not given" do
-      GOM::Object::Injector.should_receive(:new).with(an_instance_of(Test), @object_hash).and_return(@injector)
+      GOM::Object::Injector.should_receive(:new).with(an_instance_of(Object), @object_hash).and_return(@injector)
       @fetcher.perform
     end
 
-    it "should set the object's id" do
+    it "should create mapping between object and id" do
+      GOM::Object::Mapping.should_receive(:put).with(@object, "test_storage:house_1")
       @fetcher.perform
-      @fetcher.object.id.should == "test_storage:house_1"
     end
 
     it "should set the object's instance variables" do
       @fetcher.perform
-      @fetcher.object.test.should == "test value"
+      @fetcher.object.instance_variable_get(:@test).should == "test value"
     end
 
   end

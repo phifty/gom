@@ -16,14 +16,7 @@ module GOM
 
       def perform
         read_class
-        read_id
         read_properties
-      end
-
-      def read_id
-        id = @object.instance_variable_get :@id
-        @object_hash[:id] = id if id
-        id
       end
 
       private
@@ -36,7 +29,7 @@ module GOM
         @object_hash[:properties] = { }
         @object.instance_variables.each do |name|
           key = name.to_s.sub(/^@/, "").to_sym
-          @object_hash[:properties][key] = @object.instance_variable_get(name) unless key == :id
+          @object_hash[:properties][key] = @object.instance_variable_get(name)
         end
       end
 

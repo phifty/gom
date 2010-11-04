@@ -18,10 +18,10 @@ module GOM
       end
 
       def perform
-        read_id
+        check_mapping
         select_adapter
         remove_object
-        write_nil_to_object_id
+        remove_mapping
       end
 
       private
@@ -30,12 +30,9 @@ module GOM
         @adapter = GOM::Storage::Configuration[@storage_name].adapter
       end
 
-      def read_id
-        unless @id
-          inspector = GOM::Object::Inspector.new @object
-          @id = inspector.read_id
-        end
-
+      def check_mapping
+        @id ||= GOM::Object::Mapping.id_by_object @object
+        raise ArgumentError, "No id existing for the given object!" unless @id
         @storage_name, @object_id = @id.split ":"
       end
 
@@ -43,9 +40,8 @@ module GOM
         @adapter.remove @object_id
       end
 
-      def write_nil_to_object_id
-        injector = GOM::Object::Injector.new @object
-        injector.clear_id
+      def remove_mapping
+        GOM::Object::Mapping.remove_by_object @object
       end
 
     end

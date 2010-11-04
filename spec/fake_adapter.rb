@@ -2,8 +2,8 @@
 class FakeAdapter < GOM::Storage::Adapter
 
   STORE = {
-    "house_1" => {
-      :class => "House",
+    "object_1" => {
+      :class => "Object",
       :properties => {
         "number" => 5
       }
@@ -15,7 +15,7 @@ class FakeAdapter < GOM::Storage::Adapter
   end
 
   def store(object_hash)
-    "house_2"
+    "object_1"
   end
 
   def remove(id)

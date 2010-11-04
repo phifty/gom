@@ -22,6 +22,14 @@ module GOM
         @map[object]
       end
 
+      def remove_by_id(id)
+        @map.delete @map.key(id)
+      end
+
+      def remove_by_object(object)
+        @map.delete object
+      end
+
       def self.singleton
         @mapping ||= self.new
       end
@@ -36,6 +44,14 @@ module GOM
 
       def self.id_by_object(object)
         self.singleton.id_by_object object
+      end
+
+      def self.remove_by_id(id)
+        self.singleton.remove_by_id id
+      end
+
+      def self.remove_by_object(object)
+        self.singleton.remove_by_object object
       end
 
     end
