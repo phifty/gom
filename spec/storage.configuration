@@ -1,3 +1,4 @@
 
 test_storage:
   adapter: fake_adapter
+  test: test value

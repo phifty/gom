@@ -10,12 +10,21 @@ module GOM
 
       attr_reader :adapter_class
 
-      def initialize(values)
-        @adapter_class = Adapter[values["adapter"]]
+      def initialize(hash)
+        @hash = { }
+        hash.each{ |key, value| @hash[key.to_sym] = value }
       end
 
       def adapter
-        @adapter ||= @adapter_class.new self
+        @adapter ||= self.adapter_class.new self
+      end
+
+      def adapter_class
+        @adapter_class ||= Adapter[@hash[:adapter]]
+      end
+
+      def [](key)
+        @hash[key.to_sym]
       end
 
       def self.read(file_name)

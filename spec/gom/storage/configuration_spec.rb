@@ -6,6 +6,18 @@ describe GOM::Storage::Configuration do
     GOM::Storage::Configuration.read File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "storage.configuration"))
   end
 
+  describe "[]" do
+
+    before :each do
+      @configuration = GOM::Storage::Configuration[:test_storage]
+    end
+
+    it "should return the configuration value" do
+      @configuration[:test].should == "test value"
+    end
+
+  end
+
   describe "read" do
 
     before :each do
