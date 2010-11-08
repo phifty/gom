@@ -1,24 +1,24 @@
 require 'rubygems'
 gem 'rspec'
-require 'spec'
+require 'rspec'
 require 'rake/rdoctask'
 require 'rake/gempackagetask'
-require 'spec/rake/spectask'
+require 'rspec/core/rake_task'
 
 task :default => :spec
 
 specification = Gem::Specification.new do |specification|
   specification.name              = "gom"
   specification.version           = "0.0.1"
-  specification.date              = "2010-10-27"
+  specification.date              = "2010-11-05"
 
   specification.authors           = [ "Philipp Bruell" ]
   specification.email             = "b.phifty@gmail.com"
   specification.homepage          = "http://github.com/phifty/gom"
   specification.rubyforge_project = "gom"
 
-  specification.summary           = ""
-  specification.description       = ""
+  specification.summary           = "General Object Mapper - maps any ruby object to different kinds of storage engines and vice versa."
+  specification.description       = "General Object Mapper - maps any ruby object to different kinds of storage engines and vice versa."
 
   specification.has_rdoc          = true
   specification.files             = [ "README.rdoc", "LICENSE", "Rakefile" ] + Dir["lib/**/*"] + Dir["spec/**/*"]
@@ -40,15 +40,15 @@ Rake::RDocTask.new do |rdoc|
 end
 
 desc "Run all specs in spec directory"
-Spec::Rake::SpecTask.new do |task|
-  task.spec_files = FileList["spec/lib/**/*_spec.rb"]
+RSpec::Core::RakeTask.new do |task|
+  task.pattern = "spec/gom/**/*_spec.rb"
 end
 
 namespace :spec do
 
   desc "Run all integration specs in spec/acceptance directory"
-  Spec::Rake::SpecTask.new(:acceptance) do |task|
-    task.spec_files = FileList["spec/acceptance/**/*_spec.rb"]
+  RSpec::Core::RakeTask.new(:acceptance) do |task|
+    task.pattern = "spec/acceptance/**/*_spec.rb"
   end
 
 end
