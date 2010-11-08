@@ -9,6 +9,8 @@ module GOM
     autoload :Saver, File.join(File.dirname(__FILE__), "storage", "saver")
     autoload :Remover, File.join(File.dirname(__FILE__), "storage", "remover")
 
+    class NoWritePermissionError < StandardError; end
+
     def self.fetch(id, object = nil)
       fetcher = Fetcher.new id, object
       fetcher.perform
