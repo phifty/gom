@@ -6,6 +6,8 @@ module GOM
     # Base class for a storage adapter
     class Adapter
 
+      attr_reader :configuration
+
       def initialize(configuration)
         @configuration = configuration
       end
