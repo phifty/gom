@@ -9,6 +9,7 @@ module GOM
     autoload :Saver, File.join(File.dirname(__FILE__), "storage", "saver")
     autoload :Remover, File.join(File.dirname(__FILE__), "storage", "remover")
 
+    # This error can be thrown by an adapter if it's doesn't support write operations
     class NoWritePermissionError < StandardError; end
 
     def self.fetch(id, object = nil)

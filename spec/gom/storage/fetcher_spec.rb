@@ -67,6 +67,12 @@ describe GOM::Storage::Fetcher do
       @fetcher.object.instance_variable_get(:@test).should == "test value"
     end
 
+    it "should return nil if storage adapter returned nil" do
+      @adapter.stub!(:fetch).and_return(nil)
+      @fetcher.perform
+      @fetcher.object.should be_nil
+    end
+
   end
 
 end

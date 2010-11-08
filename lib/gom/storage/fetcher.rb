@@ -16,8 +16,8 @@ module GOM
       end
 
       def perform
-        select_adapter
         fetch_object_hash
+        return unless has_object_hash?
         initialize_object
         inject_object_hash
         set_mapping
@@ -25,13 +25,17 @@ module GOM
 
       private
 
-      def select_adapter
-        @adapter = GOM::Storage::Configuration[@storage_name].adapter
+      def adapter
+        @adapter ||= GOM::Storage::Configuration[@storage_name].adapter
       end
 
       def fetch_object_hash
-        @object_hash = @adapter.fetch @object_id
-        @object_hash[:id] = @id
+        @object_hash = adapter.fetch @object_id
+        @object_hash[:id] = @id if @object_hash
+      end
+
+      def has_object_hash?
+        !!@object_hash
       end
 
       def initialize_object

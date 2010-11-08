@@ -19,15 +19,14 @@ module GOM
 
       def perform
         check_mapping
-        select_adapter
         remove_object
         remove_mapping
       end
 
       private
 
-      def select_adapter
-        @adapter = GOM::Storage::Configuration[@storage_name].adapter
+      def adapter
+        @adapter ||= GOM::Storage::Configuration[@storage_name].adapter
       end
 
       def check_mapping
@@ -37,7 +36,7 @@ module GOM
       end
 
       def remove_object
-        @adapter.remove @object_id
+        adapter.remove @object_id
       end
 
       def remove_mapping

@@ -15,7 +15,6 @@ module GOM
 
       def perform
         check_mapping
-        select_adapter
         inspect_object
         store_object_hash
         set_mapping
@@ -31,8 +30,8 @@ module GOM
         end
       end
 
-      def select_adapter
-        @adapter = (@storage_name ?
+      def adapter
+        (@storage_name ?
           GOM::Storage::Configuration[@storage_name] :
           GOM::Storage::Configuration.default
         ).adapter
@@ -46,7 +45,7 @@ module GOM
       end
 
       def store_object_hash
-        @object_id = @adapter.store @object_hash
+        @object_id = adapter.store @object_hash
         @id = "#{@storage_name}:#{@object_id}"
       end
 
