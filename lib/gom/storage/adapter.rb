@@ -34,6 +34,7 @@ module GOM
       end
 
       def self.[](id)
+        @adapter_classes ||= { }
         @adapter_classes[id.to_sym]
       end
 

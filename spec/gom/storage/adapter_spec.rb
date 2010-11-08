@@ -16,6 +16,20 @@ describe GOM::Storage::Adapter do
 
   end
 
+  describe "[]" do
+
+    it "should return the adapter class" do
+      GOM::Storage::Adapter.register :test_adapter, @adapter.class
+      GOM::Storage::Adapter[:test_adapter].should == @adapter.class
+    end
+
+    it "should return nil if no adapter is registered" do
+      GOM::Storage::Adapter.instance_variable_set :@adapter_classes, nil
+      GOM::Storage::Adapter[:test_adapter].should be_nil
+    end
+
+  end
+
   describe "fetch" do
 
     it "should raise a NotImplementedError" do
