@@ -25,16 +25,9 @@ module GOM
       def check_mapping
         @id = GOM::Object::Mapping.id_by_object @object
         if @id
-          storage_name, @object_id = @id.split ":"
-          @storage_name ||= storage_name
+          @storage_name ||= @id.storage_name
+          @object_id = @id.object_id
         end
-      end
-
-      def adapter
-        (@storage_name ?
-          GOM::Storage::Configuration[@storage_name] :
-          GOM::Storage::Configuration.default
-        ).adapter
       end
 
       def inspect_object
@@ -46,13 +39,20 @@ module GOM
 
       def store_object_hash
         @object_id = adapter.store @object_hash
-        @id = "#{@storage_name}:#{@object_id}"
+        @id = GOM::Object::Id.new @storage_name, @object_id
       end
 
       def set_mapping
         GOM::Object::Mapping.put @object, @id
       end
 
+      def adapter
+        (@storage_name ?
+          GOM::Storage::Configuration[@storage_name] :
+          GOM::Storage::Configuration.default
+        ).adapter
+      end
+      
     end
 
   end

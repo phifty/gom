@@ -7,12 +7,10 @@ module GOM
     class Fetcher
 
       attr_accessor :object
-      attr_reader :storage_name
-      attr_reader :object_id
+      attr_reader :id
 
       def initialize(id, object = nil)
         @id, @object = id, object
-        @storage_name, @object_id = @id.split ":"
       end
 
       def perform
@@ -25,13 +23,8 @@ module GOM
 
       private
 
-      def adapter
-        @adapter ||= GOM::Storage::Configuration[@storage_name].adapter
-      end
-
       def fetch_object_hash
-        @object_hash = adapter.fetch @object_id
-        @object_hash[:id] = @id if @object_hash
+        @object_hash = adapter.fetch @id.object_id
       end
 
       def has_object_hash?
@@ -51,6 +44,10 @@ module GOM
 
       def set_mapping
         GOM::Object::Mapping.put @object, @id
+      end
+
+      def adapter
+        @adapter ||= GOM::Storage::Configuration[@id.storage_name].adapter
       end
 
     end

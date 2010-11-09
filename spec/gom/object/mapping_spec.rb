@@ -4,7 +4,7 @@ describe GOM::Object::Mapping do
 
   before :each do
     @object = Object.new
-    @id = "object_1"
+    @id = GOM::Object::Id.new "test_storage", "object_1"
     @mapping = GOM::Object::Mapping.new
   end
 
@@ -20,6 +20,7 @@ describe GOM::Object::Mapping do
   describe "with a mapping" do
 
     before :each do
+      @same_id = GOM::Object::Id.new "test_storage", "object_1"
       @mapping.put @object, @id
     end
 
@@ -27,6 +28,7 @@ describe GOM::Object::Mapping do
 
       it "should return the object to the given id" do
         @mapping.object_by_id(@id).should == @object
+        @mapping.object_by_id(@same_id).should == @object
       end
 
     end
@@ -35,6 +37,7 @@ describe GOM::Object::Mapping do
 
       it "should return the id to the given object" do
         @mapping.id_by_object(@object).should == @id
+        @mapping.id_by_object(@object).should == @same_id
       end
 
     end
@@ -63,7 +66,7 @@ describe GOM::Object::Mapping do
 
     before :each do
       @object = Object.new
-      @id = "object_1"
+      @id = GOM::Object::Id.new "test_storage", "object_1"
 
       @mapping = Object.new
       @mapping.stub!(:put)

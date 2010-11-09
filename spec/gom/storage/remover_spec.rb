@@ -3,6 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "spec_hel
 describe GOM::Storage::Remover do
 
   before :each do
+    @id = GOM::Object::Id.new "test_storage", "object_1"
     @object = Object.new
 
     @adapter = Object.new
@@ -11,7 +12,7 @@ describe GOM::Storage::Remover do
     @configuration.stub!(:adapter).and_return(@adapter)
     GOM::Storage::Configuration.stub!(:[]).and_return(@configuration)
 
-    GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return("test_storage:object_1")
+    GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return(@id)
     GOM::Object::Mapping.stub!(:remove_by_object)
 
     @remover = GOM::Storage::Remover.new @object

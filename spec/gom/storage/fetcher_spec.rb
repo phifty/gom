@@ -3,6 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "spec_hel
 describe GOM::Storage::Fetcher do
 
   before :each do
+    @id = GOM::Object::Id.new "test_storage", "object_1"
     @object = Object.new
     @object.instance_variable_set :@test, "test value"
     @object_hash = {
@@ -24,7 +25,7 @@ describe GOM::Storage::Fetcher do
     @injector.stub!(:object).and_return(@object)
     GOM::Object::Injector.stub!(:new).and_return(@injector)
 
-    @fetcher = GOM::Storage::Fetcher.new "test_storage:house_1"
+    @fetcher = GOM::Storage::Fetcher.new @id
   end
 
   describe "perform" do
@@ -35,7 +36,7 @@ describe GOM::Storage::Fetcher do
     end
 
     it "should fetch the id from the adapter instance" do
-      @adapter.should_receive(:fetch).with("house_1").and_return(@object_hash)
+      @adapter.should_receive(:fetch).with("object_1").and_return(@object_hash)
       @fetcher.perform
     end
 
@@ -48,7 +49,7 @@ describe GOM::Storage::Fetcher do
 
     it "should check if a mapping exists for the object" do
       object = Object.new
-      GOM::Object::Mapping.should_receive(:object_by_id).with("test_storage:house_1").and_return(object)
+      GOM::Object::Mapping.should_receive(:object_by_id).with(@id).and_return(object)
       @fetcher.perform
     end
 
@@ -58,7 +59,7 @@ describe GOM::Storage::Fetcher do
     end
 
     it "should create mapping between object and id" do
-      GOM::Object::Mapping.should_receive(:put).with(@object, "test_storage:house_1")
+      GOM::Object::Mapping.should_receive(:put).with(@object, @id)
       @fetcher.perform
     end
 
