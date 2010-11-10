@@ -32,6 +32,20 @@ describe GOM::Object::Injector do
       @injector.object.instance_variable_get(:@related_object).should == @related_object_proxy
     end
 
+    it "should work without a properties hash" do
+      @object_hash.delete :properties
+      lambda do
+        @injector.perform
+      end.should_not raise_error
+    end
+
+    it "should work without a relations hash" do
+      @object_hash.delete :relations
+      lambda do
+        @injector.perform
+      end.should_not raise_error
+    end
+
   end
 
 end

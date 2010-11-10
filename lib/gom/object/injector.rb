@@ -27,13 +27,13 @@ module GOM
       end
 
       def write_properties
-        @object_hash[:properties].each do |name, value|
+        (@object_hash[:properties] || { }).each do |name, value|
           @object.instance_variable_set :"@#{name}", value
         end
       end
 
       def write_relations
-        @object_hash[:relations].each do |name, value|
+        (@object_hash[:relations] || { }).each do |name, value|
           @object.instance_variable_set :"@#{name}", value
         end
       end
