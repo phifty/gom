@@ -13,7 +13,7 @@ module GOM
     class NoWritePermissionError < StandardError; end
 
     def self.fetch(id_string, object = nil)
-      id = GOM::Object::Id.new id_string
+      id = id_string.is_a?(String) ? GOM::Object::Id.new(id_string) : nil
       fetcher = Fetcher.new id, object
       fetcher.perform
       fetcher.object

@@ -38,6 +38,13 @@ describe GOM::Storage do
       GOM::Storage.fetch(@id_string).should == @object
     end
 
+    it "should return nil if nil is given" do
+      GOM::Storage::Fetcher.should_receive(:new).with(nil, nil).and_return(@fetcher)
+      @fetcher.stub!(:object).and_return(nil)
+
+      GOM::Storage.fetch(nil).should be_nil
+    end
+
   end
 
   describe "store" do

@@ -17,6 +17,7 @@ module GOM
       def perform
         read_class
         read_properties
+        read_relations
       end
 
       private
@@ -27,9 +28,23 @@ module GOM
 
       def read_properties
         @object_hash[:properties] = { }
+        read_instance_variables do |key, value|
+          @object_hash[:properties][key] = value unless value.is_a?(GOM::Object::Proxy)
+        end
+      end
+
+      def read_relations
+        @object_hash[:relations] = { }
+        read_instance_variables do |key, value|
+          @object_hash[:relations][key] = value if value.is_a?(GOM::Object::Proxy)
+        end
+      end
+
+      def read_instance_variables
         @object.instance_variables.each do |name|
           key = name.to_s.sub(/^@/, "").to_sym
-          @object_hash[:properties][key] = @object.instance_variable_get(name)
+          value = @object.instance_variable_get name
+          yield key, value
         end
       end
 

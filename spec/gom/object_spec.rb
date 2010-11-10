@@ -23,4 +23,18 @@ describe GOM::Object do
 
   end
 
+  describe "reference" do
+
+    before :each do
+      @object = Object.new
+    end
+
+    it "should return a proxy for the given object" do
+      proxy = GOM::Object.reference @object
+      proxy.should be_instance_of(GOM::Object::Proxy)
+      proxy.object.should == @object
+    end
+
+  end
+
 end

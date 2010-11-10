@@ -5,16 +5,27 @@ GOM::Storage::Configuration.read File.join(File.dirname(__FILE__), "..", "storag
 
 describe "object" do
 
+  before :each do
+    @object = Object.new
+  end
+
   describe "getting it's id" do
 
     before :each do
-      @object = Object.new
       GOM::Storage.store @object, "test_storage"
     end
 
     it "should return the id" do
       id = GOM::Object.id @object
       id.should == "test_storage:object_1"
+    end
+
+  end
+
+  describe "getting an object reference" do
+
+    it "should create an object proxy" do
+      GOM::Object.reference(@object).should be_instance_of(GOM::Object::Proxy)
     end
 
   end

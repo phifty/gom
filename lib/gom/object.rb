@@ -14,6 +14,10 @@ module GOM
       id ? id.to_s : nil
     end
 
+    def self.reference(object)
+      Proxy.new object
+    end
+
   end
 
 end

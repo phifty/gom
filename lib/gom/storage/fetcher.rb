@@ -24,7 +24,7 @@ module GOM
       private
 
       def fetch_object_hash
-        @object_hash = adapter.fetch @id.object_id
+        @object_hash = @id ? adapter.fetch(@id.object_id) : nil
       end
 
       def has_object_hash?

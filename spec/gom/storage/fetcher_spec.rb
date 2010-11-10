@@ -30,6 +30,12 @@ describe GOM::Storage::Fetcher do
 
   describe "perform" do
 
+    it "should do no fetch if no id is given" do
+      @fetcher.instance_variable_set :@id, nil
+      @adapter.should_not_receive(:fetch)
+      @fetcher.perform
+    end
+
     it "should route the call to the correct storage" do
       GOM::Storage::Configuration.should_receive(:[]).with("test_storage")
       @fetcher.perform

@@ -6,14 +6,17 @@ GOM::Storage::Configuration.read File.join(File.dirname(__FILE__), "..", "storag
 describe "storage" do
 
   before :each do
-    @fake_adapter = GOM::Storage::Configuration[:test_storage].adapter
+    @related_object = Object.new
+    @related_object.instance_variable_set :@number, 16
+
+    @object = Object.new
+    @object.instance_variable_set :@number, 11
+    @object.instance_variable_set :@related_object, GOM::Object.reference(@related_object)
   end
 
   describe "fetching an object" do
 
     before :each do
-      @object = Object.new
-      @object.instance_variable_set :@number, 5
       GOM::Storage.store @object, :test_storage
       @id = GOM::Object.id(@object)
     end
@@ -25,18 +28,21 @@ describe "storage" do
     it "should return the correct object" do
       object = GOM::Storage.fetch @id
       object.should be_instance_of(Object)
-      object.instance_variable_get(:@number).should == 5
+      object.instance_variable_get(:@number).should == 11
       GOM::Object.id(object).should == @id
+    end
+
+    it "should also fetch the related object" do
+      object = GOM::Storage.fetch @id
+      related_object = object.instance_variable_get :@related_object
+      related_object.should be_instance_of(GOM::Object::Proxy)
+      related_object.object.should == @related_object
+      related_object.object.instance_variable_get(:@number).should == 16
     end
 
   end
 
   describe "storing an object" do
-
-    before :each do
-      @object = Object.new
-      @object.instance_variable_set :@number, 11
-    end
 
     it "should store the object" do
       GOM::Storage.store @object, :test_storage
@@ -54,15 +60,24 @@ describe "storage" do
       GOM::Object.id(@object).should =~ /^test_storage:object_\d$/
     end
 
+    it "should store the related object" do
+      GOM::Storage.store @object, :test_storage
+      related_object = GOM::Storage.fetch GOM::Object.id(@related_object)
+      related_object.should == @related_object
+      related_object.instance_variable_get(:@number).should == 16
+    end
+
   end
 
   describe "removing an object" do
 
     before :each do
-      @object = Object.new
-      @object.instance_variable_set :@number, 5
       GOM::Storage.store @object, :test_storage
-      @id = GOM::Object.id(@object)
+      @id = GOM::Object.id @object
+    end
+
+    after :each do
+      GOM::Storage.remove @related_object
     end
 
     it "should remove the object" do
@@ -78,6 +93,11 @@ describe "storage" do
     it "should remove the object's id" do
       GOM::Storage.remove @object
       GOM::Object.id(@object).should be_nil
+    end
+
+    it "should not remove the related object" do
+      GOM::Storage.remove @object
+      GOM::Object.id(@related_object).should_not be_nil
     end
 
   end
