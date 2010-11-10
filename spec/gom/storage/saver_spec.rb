@@ -9,51 +9,48 @@ describe GOM::Storage::Saver do
     @object.freeze
     @object_hash = {
       :class => "Object",
+      :id => "object_1",
       :properties => {
         :test => "test value"
       }
-    }.freeze
+    }
 
-    GOM::Object::Mapping.stub!(:id_by_object)
+    GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return(@id)
     GOM::Object::Mapping.stub!(:put)
 
     @adapter = Object.new
     @adapter.stub!(:store).and_return("object_1")
     @configuration = Object.new
+    @configuration.stub!(:name).and_return("default_test_storage")
     @configuration.stub!(:adapter).and_return(@adapter)
     GOM::Storage::Configuration.stub!(:[]).and_return(@configuration)
     GOM::Storage::Configuration.stub!(:default).and_return(@configuration)
 
     @inspector = Object.new
     @inspector.stub!(:perform)
-    @inspector.stub!(:object_hash).and_return(@object_hash.dup)
+    @inspector.stub!(:object_hash).and_return(@object_hash)
     GOM::Object::Inspector.stub!(:new).and_return(@inspector)
 
-    @saver = GOM::Storage::Saver.new @object, "test_storage"
+    @saver = GOM::Storage::Saver.new @object
   end
 
   describe "perform" do
 
     it "should check the mapping if an id is existing" do
       GOM::Object::Mapping.should_receive(:id_by_object).with(@object).and_return(@id)
-      @adapter.should_receive(:store).with(@object_hash.merge(:id => "object_1"))
       @saver.perform
     end
 
-    it "should set the storage name if not given" do
-      @saver.instance_variable_set :@storage_name, nil
-      another_id = GOM::Object::Id.new "another_test_storage", "object_1"
-
-      GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return(another_id)
+    it "should override the storage name if given" do
+      @saver.instance_variable_set :@storage_name, "another_test_storage"
       @saver.perform
       @saver.storage_name.should == "another_test_storage"
     end
 
-    it "should select the default storage if no storage name is given" do
-      @saver.instance_variable_set :@storage_name, nil
-
-      GOM::Storage::Configuration.should_receive(:default).and_return(@configuration)
+    it "should select the default storage if no storage name can be detected" do
+      GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return(nil)
       @saver.perform
+      @saver.storage_name.should == "default_test_storage"
     end
 
     it "should select the correct storage" do
@@ -66,10 +63,11 @@ describe GOM::Storage::Saver do
       @saver.perform
     end
 
-    it "should store the object under an id if a mapping exists" do
-      GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return(@id)
+    it "should store the object without an id if no mapping exists" do
+      GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return(nil)
+      @object_hash.delete :id
 
-      @adapter.should_receive(:store).with(@object_hash.merge(:id => "object_1")).and_return("object_1")
+      @adapter.should_receive(:store).with(@object_hash).and_return("object_1")
       @saver.perform
     end
 

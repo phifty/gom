@@ -14,45 +14,44 @@ module GOM
       end
 
       def perform
-        check_mapping
+        fetch_id
+        update_storage_name
         inspect_object
         store_object_hash
-        set_mapping
+        store_id
       end
 
       private
 
-      def check_mapping
+      def fetch_id
         @id = GOM::Object::Mapping.id_by_object @object
-        if @id
-          @storage_name ||= @id.storage_name
-          @object_id = @id.object_id
-        end
+      end
+
+      def update_storage_name
+        @storage_name ||= @id.storage_name if @id
+        @storage_name ||= GOM::Storage::Configuration.default.name
       end
 
       def inspect_object
         inspector = GOM::Object::Inspector.new @object
         inspector.perform
         @object_hash = inspector.object_hash
-        @object_hash[:id] = @object_id if @object_id
+        @object_hash[:id] = @id.object_id if @id
       end
 
       def store_object_hash
-        @object_id = adapter.store @object_hash
-        @id = GOM::Object::Id.new @storage_name, @object_id
+        object_id = adapter.store @object_hash
+        @id = GOM::Object::Id.new @storage_name.to_s, object_id
       end
 
-      def set_mapping
+      def store_id
         GOM::Object::Mapping.put @object, @id
       end
 
       def adapter
-        (@storage_name ?
-          GOM::Storage::Configuration[@storage_name] :
-          GOM::Storage::Configuration.default
-        ).adapter
+        GOM::Storage::Configuration[@storage_name].adapter
       end
-      
+
     end
 
   end

@@ -1,25 +1,20 @@
 
 class FakeAdapter < GOM::Storage::Adapter
 
-  STORE = {
-    "object_1" => {
-      :class => "Object",
-      :properties => {
-        "number" => 5
-      }
-    }
-  }.freeze
+  STORE = { }
 
   def fetch(id)
     STORE[id]
   end
 
   def store(object_hash)
-    "object_1"
+    id = object_hash[:id] || "object_#{STORE.size + 1}"
+    STORE[id] = object_hash
+    id
   end
 
   def remove(id)
-
+    STORE.delete id
   end
 
 end

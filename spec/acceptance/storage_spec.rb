@@ -5,13 +5,28 @@ GOM::Storage::Configuration.read File.join(File.dirname(__FILE__), "..", "storag
 
 describe "storage" do
 
+  before :each do
+    @fake_adapter = GOM::Storage::Configuration[:test_storage].adapter
+  end
+
   describe "fetching an object" do
 
+    before :each do
+      @object = Object.new
+      @object.instance_variable_set :@number, 5
+      GOM::Storage.store @object, :test_storage
+      @id = GOM::Object.id(@object)
+    end
+
+    after :each do
+      GOM::Storage.remove @object
+    end
+
     it "should return the correct object" do
-      object = GOM::Storage.fetch "test_storage:object_1"
+      object = GOM::Storage.fetch @id
       object.should be_instance_of(Object)
       object.instance_variable_get(:@number).should == 5
-      GOM::Object.id(object).should == "test_storage:object_1"
+      GOM::Object.id(object).should == @id
     end
 
   end
@@ -24,28 +39,19 @@ describe "storage" do
     end
 
     it "should store the object" do
-      GOM::Storage::Configuration[:test_storage].adapter.should_receive(:store).with({
-        :class => "Object",
-        :properties => {
-          :number => 11
-        }
-      }).and_return("object_1")
-      GOM::Storage.store @object, "test_storage"
+      GOM::Storage.store @object, :test_storage
+      object = GOM::Storage.fetch GOM::Object.id(@object)
+      object.should == @object
     end
 
     it "should use default storage if nothing specified" do
-      GOM::Storage::Configuration[:test_storage].adapter.should_receive(:store).with({
-        :class => "Object",
-        :properties => {
-          :number => 11
-        }
-      }).and_return("object_1")
       GOM::Storage.store @object
+      GOM::Object.id(@object).should =~ /^test_storage:/
     end
 
     it "should set the object's id" do
       GOM::Storage.store @object, "test_storage"
-      GOM::Object.id(@object).should == "test_storage:object_1"
+      GOM::Object.id(@object).should =~ /^test_storage:object_\d$/
     end
 
   end
@@ -53,17 +59,20 @@ describe "storage" do
   describe "removing an object" do
 
     before :each do
-      @object = GOM::Storage.fetch "test_storage:object_1"
+      @object = Object.new
+      @object.instance_variable_set :@number, 5
+      GOM::Storage.store @object, :test_storage
+      @id = GOM::Object.id(@object)
     end
 
     it "should remove the object" do
-      GOM::Storage::Configuration[:test_storage].adapter.should_receive(:remove).with("object_1")
       GOM::Storage.remove @object
+      GOM::Storage.fetch(@id).should be_nil
     end
 
     it "should remove the object identified by the id" do
-      GOM::Storage::Configuration[:test_storage].adapter.should_receive(:remove).with("object_1")
-      GOM::Storage.remove "test_storage:object_1"
+      GOM::Storage.remove @id
+      GOM::Storage.fetch(@id).should be_nil
     end
 
     it "should remove the object's id" do

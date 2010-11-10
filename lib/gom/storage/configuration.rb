@@ -8,10 +8,10 @@ module GOM
     # Stores all information to configure a storage
     class Configuration
 
-      attr_reader :adapter_class
+      attr_reader :name
 
-      def initialize(hash)
-        @hash = { }
+      def initialize(name, hash)
+        @name, @hash = name, { }
         hash.each{ |key, value| @hash[key.to_sym] = value }
       end
 
@@ -30,7 +30,7 @@ module GOM
       def self.read(file_name)
         @configurations = { }
         YAML::load_file(file_name).each do |name, values|
-          @configurations[name.to_sym] = self.new values
+          @configurations[name.to_sym] = self.new name, values
         end
       end
 
