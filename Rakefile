@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'rubygems'
 gem 'rspec'
 require 'rspec'
@@ -8,17 +9,17 @@ require 'rspec/core/rake_task'
 task :default => :spec
 
 specification = Gem::Specification.new do |specification|
-  specification.name              = "gom"
+  specification.name              = "gom-core"
   specification.version           = "0.0.1"
-  specification.date              = "2010-11-05"
+  specification.date              = "2010-11-11"
 
-  specification.authors           = [ "Philipp Bruell" ]
+  specification.authors           = [ "Philipp Brüll" ]
   specification.email             = "b.phifty@gmail.com"
-  specification.homepage          = "http://github.com/phifty/gom"
+  specification.homepage          = "http://github.com/phifty/gom-core"
   specification.rubyforge_project = "gom"
 
   specification.summary           = "General Object Mapper - maps any ruby object to different kinds of storage engines and vice versa."
-  specification.description       = "General Object Mapper - maps any ruby object to different kinds of storage engines and vice versa."
+  specification.description       = "Core package of the General Object Mapper."
 
   specification.has_rdoc          = true
   specification.files             = [ "README.rdoc", "LICENSE", "Rakefile" ] + Dir["lib/**/*"] + Dir["spec/**/*"]
