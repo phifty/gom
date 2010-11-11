@@ -9,13 +9,13 @@ require 'rspec/core/rake_task'
 task :default => :spec
 
 specification = Gem::Specification.new do |specification|
-  specification.name              = "gom-core"
+  specification.name              = "gom"
   specification.version           = "0.0.1"
   specification.date              = "2010-11-11"
 
   specification.authors           = [ "Philipp Brüll" ]
   specification.email             = "b.phifty@gmail.com"
-  specification.homepage          = "http://github.com/phifty/gom-core"
+  specification.homepage          = "http://github.com/phifty/gom"
   specification.rubyforge_project = "gom"
 
   specification.summary           = "General Object Mapper - maps any ruby object to different kinds of storage engines and vice versa."
