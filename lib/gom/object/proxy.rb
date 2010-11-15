@@ -17,6 +17,11 @@ module GOM
         @object
       end
 
+      def id
+        fetch_id unless @id
+        @id
+      end
+
       def method_missing(method_name, *arguments, &block)
         fetch_object unless @object
         @object.send method_name, *arguments, &block
@@ -28,6 +33,10 @@ module GOM
         fetcher = GOM::Storage::Fetcher.new @id
         fetcher.perform
         @object = fetcher.object
+      end
+
+      def fetch_id
+        @id = GOM::Object::Mapping.id_by_object @object
       end
 
     end

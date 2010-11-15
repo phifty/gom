@@ -5,8 +5,7 @@ describe GOM::Object::Proxy do
   describe "initialized with an object" do
 
     before :each do
-      @object = Object.new
-      @object.stub!(:test_method)
+      @object = mock Object, :test_method => nil
 
       @proxy = GOM::Object::Proxy.new @object
     end
@@ -24,19 +23,40 @@ describe GOM::Object::Proxy do
 
     end
 
+    describe "id" do
+
+      before :each do
+        @id = mock GOM::Object::Id
+        GOM::Object::Mapping.stub(:id_by_object).and_return(@id)
+      end
+
+      it "should fetch the id from the mapping" do
+        GOM::Object::Mapping.should_receive(:id_by_object).with(@object).and_return(@id)
+        @proxy.id
+      end
+
+      it "should return the fetched id" do
+        @proxy.id.should == @id
+      end
+
+      it "should return nil if no mapping exists" do
+        GOM::Object::Mapping.stub(:id_by_object).and_return(nil)
+        @proxy.id.should be_nil
+      end
+
+    end
+
   end
 
   describe "initialized with an id" do
 
     before :each do
       @id = GOM::Object::Id.new "test_storage", "object_1"
-      @object = Object.new
-      @object.stub!(:test_method)
 
-      @fetcher = Object.new
-      @fetcher.stub!(:perform)
-      @fetcher.stub!(:object).and_return(@object)
-      GOM::Storage::Fetcher.stub!(:new).and_return(@fetcher)
+      @object = mock Object, :test_method => nil
+
+      @fetcher = mock GOM::Storage::Fetcher, :perform => nil, :object => @object
+      GOM::Storage::Fetcher.stub(:new).and_return(@fetcher)
 
       @proxy = GOM::Object::Proxy.new @id
     end
@@ -54,6 +74,14 @@ describe GOM::Object::Proxy do
         GOM::Storage::Fetcher.should_receive(:new).with(@id).and_return(@fetcher)
         @fetcher.should_receive(:perform)
         @proxy.object.should == @object
+      end
+
+    end
+
+    describe "id" do
+
+      it "should return the id" do
+        @proxy.id.should == @id
       end
 
     end
