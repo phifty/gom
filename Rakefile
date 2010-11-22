@@ -1,4 +1,3 @@
-# encoding: UTF-8
 require 'rubygems'
 gem 'rspec'
 require 'rspec'
@@ -10,10 +9,10 @@ task :default => :spec
 
 specification = Gem::Specification.new do |specification|
   specification.name              = "gom"
-  specification.version           = "0.0.1"
+  specification.version           = "0.1.0"
   specification.date              = "2010-11-22"
 
-  specification.authors           = [ "Philipp Brüll" ]
+  specification.authors           = [ "Philipp Bruell" ]
   specification.email             = "b.phifty@gmail.com"
   specification.homepage          = "http://github.com/phifty/gom"
   specification.rubyforge_project = "gom"
@@ -27,6 +26,8 @@ specification = Gem::Specification.new do |specification|
   specification.require_path      = "lib"
 
   specification.test_files        = Dir["spec/**/*_spec.rb"]
+
+  specification.add_development_dependency "rspec", ">= 2"
 end
 
 Rake::GemPackageTask.new(specification) do |package|

@@ -1,6 +1,80 @@
 
 = General Object Mapper
 
+The General Object Mapper maps ruby objects to different storage engines and vice versa. The interface is designed to
+be small and try to avoid any unnecessary dependencies between GOM and your code. On the other side, the storage engine
+is plugged-in via an adapter interface. Currently, the following adapters are provided.
+
+* filesystem - http://github.com/phifty/gom-filesystem-adapter
+* couchdb - http://github.com/phifty/gom-couchdb-adapter
+
+== Configuration
+
+At the beginning of your program the configuration should be read with the following command.
+
+  GOM::Storage::Configuration.read filename
+
+The configuration file should be written in the YML format and look like...
+
+  storage_name:
+    adapter: filesystem
+    directory: /var/project-name/data
+
+Look at the adapter pages to see the adapter-specific configuration values.
+
+== How to use
+
+=== Storing an object
+
+To store an object just pass it to <tt>GOM::Storage.store</tt>.
+
+  class Book
+
+    attr_accessor :author_name
+    attr_accessor :pages
+
+  end
+
+  book = Book.new
+  book.author_name = "Mr. Storyteller"
+  book.pages = 1253
+
+  GOM::Storage.store book, :storage_name
+
+The storage name doesn't have to be specified. If it's missing, the object's previously use storage or the default
+storage is used.
+
+There is no base class needed for your model class. GOM inspects your object, reads all the instance variables and
+passes the values to specified store adapter. The first time an object is stored, an id is generated and assigned to
+the object. This id an be determined by calling <tt>GOM::Object.id</tt>.
+
+  book_id = GOM::Object.id book
+  # book_id => "storage_name:1234..."
+
+== Fetching an object
+
+Once an object is stored, it can be easily brought back to life by using it's id to fetch it from the storage.
+
+  book = GOM::Storage.fetch book_id
+
+The storage name is encoded (prefixed) in the id and don't have to be specified. The classname of the object was also
+saved during the storage and the fetch instantiate a new object using the constructor with no arguments. If this
+doesn't fit your needs, the already initiated object can be passed to the fetch method.
+
+  book = GOM::Storage.fetch book_id, Book.new(...)
+
+The instance variables of the initialized of the given object, will be set with the stored values.
+
+== Removing an object
+
+To remove an object from the storage, simply pass it to <tt>GOM::Storage.remove</tt>.
+
+  GOM::Storage.remove book
+
+It's also possible to use just the id to remove the assigned object.
+
+  GOM::Storage.remove book_id
+
 == Development
 
-GOM is still in an early phase of development. Any bug report and contribution is welcome!
+GOM is still under development. Any bug report and contribution is welcome!
