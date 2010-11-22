@@ -1,4 +1,3 @@
-require 'rspec'
 
 shared_examples_for "an adapter connected to a stateful storage" do
 
