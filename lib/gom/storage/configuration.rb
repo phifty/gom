@@ -27,6 +27,10 @@ module GOM
         @hash[key.to_sym]
       end
 
+      def values_at(*arguments)
+        arguments.map{ |argument| self[argument] }
+      end
+
       def self.read(file_name)
         @configurations = { }
         YAML::load_file(file_name).each do |name, values|

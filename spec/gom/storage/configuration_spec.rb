@@ -4,13 +4,10 @@ describe GOM::Storage::Configuration do
 
   before :each do
     GOM::Storage::Configuration.read File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "storage.configuration"))
+    @configuration = GOM::Storage::Configuration[:test_storage]
   end
 
   describe "name" do
-
-    before :each do
-      @configuration = GOM::Storage::Configuration[:test_storage]
-    end
 
     it "should return the configuration's name" do
       @configuration.name.should == "test_storage"
@@ -20,21 +17,21 @@ describe GOM::Storage::Configuration do
 
   describe "[]" do
 
-    before :each do
-      @configuration = GOM::Storage::Configuration[:test_storage]
-    end
-
     it "should return the configuration value" do
       @configuration[:test].should == "test value"
     end
 
   end
 
-  describe "read" do
+  describe "values_at" do
 
-    before :each do
-      @configuration = GOM::Storage::Configuration[:test_storage]
+    it "should return multiple configuration values" do
+      @configuration.values_at(:adapter, :test).should == [ "fake_adapter", "test value" ]
     end
+
+  end
+
+  describe "read" do
 
     it "should read the configuration file" do
       @configuration.should be_instance_of(GOM::Storage::Configuration)
