@@ -21,10 +21,10 @@ shared_examples_for "a read-only adapter connected to a stateless storage" do
 
   describe "storing an object" do
 
-    it "should raise a NoWritePermissionError" do
+    it "should raise a ReadOnlyError" do
       lambda do
         GOM::Storage.store Object.new, "test_storage"
-      end.should raise_error(GOM::Storage::NoWritePermissionError)
+      end.should raise_error(GOM::Storage::ReadOnlyError)
     end
 
   end
@@ -35,10 +35,10 @@ shared_examples_for "a read-only adapter connected to a stateless storage" do
       @object = GOM::Storage.fetch "test_storage:object_1"
     end
 
-    it "should raise a NoWritePermissionError" do
+    it "should raise a ReadOnlyError" do
       lambda do
         GOM::Storage.remove @object
-      end.should raise_error(GOM::Storage::NoWritePermissionError)
+      end.should raise_error(GOM::Storage::ReadOnlyError)
     end
 
   end

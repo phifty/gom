@@ -10,7 +10,7 @@ module GOM
     autoload :Remover, File.join(File.dirname(__FILE__), "storage", "remover")
 
     # This error can be thrown by an adapter if it's doesn't support write operations
-    class NoWritePermissionError < StandardError; end
+    class ReadOnlyError < StandardError; end
 
     def self.fetch(id_string, object = nil)
       id = id_string.is_a?(String) ? GOM::Object::Id.new(id_string) : nil
