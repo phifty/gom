@@ -1,3 +1,4 @@
+require File.join(File.dirname(__FILE__), "spec", "acceptance", "adapter_with_stateful_storage")
 
 module GOM
 
