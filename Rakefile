@@ -2,42 +2,28 @@ require 'rubygems'
 gem 'rspec'
 require 'rspec'
 require 'rake/rdoctask'
-require 'rake/gempackagetask'
 require 'rspec/core/rake_task'
 
 task :default => :spec
 
-specification = Gem::Specification.new do |specification|
-  specification.name              = "gom"
-  specification.version           = "0.1.0"
-  specification.date              = "2010-11-22"
+namespace :gem do
 
-  specification.authors           = [ "Philipp Bruell" ]
-  specification.email             = "b.phifty@gmail.com"
-  specification.homepage          = "http://github.com/phifty/gom"
-  specification.rubyforge_project = "gom"
+  desc "Builds the gem"
+  task :build do
+    system "gem build gom.gemspec && mkdir -p pkg/ && mv *.gem pkg/"
+  end
 
-  specification.summary           = "General Object Mapper - maps any ruby object to different kinds of storage engines and vice versa."
-  specification.description       = "Core package of the General Object Mapper."
+  desc "Builds and installs the gem"
+  task :install => :build do
+    system "gem install pkg/"
+  end
 
-  specification.has_rdoc          = true
-  specification.files             = [ "README.rdoc", "LICENSE", "Rakefile" ] + Dir["lib/**/*"] + Dir["spec/**/*"]
-  specification.extra_rdoc_files  = [ "README.rdoc" ]
-  specification.require_path      = "lib"
-
-  specification.test_files        = Dir["spec/**/*_spec.rb"]
-
-  specification.add_development_dependency "rspec", ">= 2"
-end
-
-Rake::GemPackageTask.new(specification) do |package|
-  package.gem_spec = specification
 end
 
 desc "Generate the rdoc"
 Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.add [ "README.rdoc", "lib/**/*.rb" ]
-  rdoc.main  = "README.rdoc"
+  rdoc.main = "README.rdoc"
   rdoc.title = ""
 end
 
