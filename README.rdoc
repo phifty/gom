@@ -1,7 +1,7 @@
 
-= General Object Mapper
+= Generic Object Mapper
 
-The General Object Mapper maps ruby objects to different storage engines and vice versa. The interface is designed to
+The Generic Object Mapper maps ruby objects to different storage engines and vice versa. The interface is designed to
 be small and try to avoid any unnecessary dependencies between GOM and your code. On the other side, the storage engine
 is plugged-in via an adapter interface. Currently, the following adapters are provided.
 
@@ -51,7 +51,7 @@ the object. This id an be determined by calling <tt>GOM::Object.id</tt>.
   book_id = GOM::Object.id book
   # book_id => "storage_name:1234..."
 
-== Fetching an object
+=== Fetching an object
 
 Once an object is stored, it can be easily brought back to life by using it's id to fetch it from the storage.
 
@@ -65,7 +65,7 @@ doesn't fit your needs, the already initiated object can be passed to the fetch 
 
 The instance variables of the initialized of the given object, will be set with the stored values.
 
-== Removing an object
+=== Removing an object
 
 To remove an object from the storage, simply pass it to <tt>GOM::Storage.remove</tt>.
 
@@ -75,6 +75,37 @@ It's also possible to use just the id to remove the assigned object.
 
   GOM::Storage.remove book_id
 
+== Relations
+
+GOM does make a distinction between object properties and object relations. The properties are more atomic values that
+can be stored in a key/value-way and relations are links to more complex objects. Since in Ruby everything is an object,
+it's necessary to mark the relations. This is done by the following way.
+
+  class Book
+
+    attr_accessor :author
+
+  end
+
+  class Author
+
+    attr_accessor :name
+
+  end
+
+  author = Author.new
+  author.name = "Mr. Storyteller"
+
+  book = Book.new
+  book.author = GOM::Object.reference author
+
+The <tt>GOM::Object.reference</tt> call creates a proxy to the referenced object, that passes every call to it. For
+example, the call
+
+  book.author.name
+
+will return the instance variable <tt>@name</tt> ("Mr. Storyteller") from the author object.
+
 == Development
 
-GOM is still under development. Any bug report and contribution is welcome!
+This project is still experimental and under development. Any bug report and contribution is welcome!
