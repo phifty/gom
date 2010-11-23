@@ -1,8 +1,10 @@
 require 'rubygems'
 gem 'rspec'
+gem 'reek'
 require 'rspec'
 require 'rake/rdoctask'
 require 'rspec/core/rake_task'
+require 'reek/rake/task'
 
 task :default => :spec
 
@@ -10,7 +12,7 @@ namespace :gem do
 
   desc "Builds the gem"
   task :build do
-    system "gem build gom.gemspec && mkdir -p pkg/ && mv *.gem pkg/"
+    system "gem build .gemspec && mkdir -p pkg/ && mv *.gem pkg/"
   end
 
   desc "Builds and installs the gem"
@@ -18,6 +20,10 @@ namespace :gem do
     system "gem install pkg/"
   end
 
+end
+
+Reek::Rake::Task.new do |task|
+  task.fail_on_error = true
 end
 
 desc "Generate the rdoc"
