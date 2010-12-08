@@ -15,7 +15,7 @@ module GOM
       end
 
       def object_by_id(id)
-        @map.key(id)
+        @map.respond_to?(:key) ? @map.key(id) : @map.index(id)
       end
 
       def id_by_object(object)
@@ -23,7 +23,7 @@ module GOM
       end
 
       def remove_by_id(id)
-        @map.delete @map.key(id)
+        @map.delete object_by_id(id)
       end
 
       def remove_by_object(object)
