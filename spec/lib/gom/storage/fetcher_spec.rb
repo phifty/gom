@@ -11,7 +11,8 @@ describe GOM::Storage::Fetcher do
       :properties => { :test => "test value" }
     }
 
-    @klass = mock Class, :new => @object, :method => mock(Method, :arity => 3)
+    @new_method = mock Method, :arity => 3
+    @klass = mock Class, :new => @object, :method => @new_method
     Object.stub(:const_get).and_return(@klass)
 
     @adapter = mock GOM::Storage::Adapter, :fetch => @object_hash
@@ -48,6 +49,12 @@ describe GOM::Storage::Fetcher do
 
     it "should initialize the object with nil-arguments to the constructor" do
       @klass.should_receive(:new).with(nil, nil, nil).and_return(@object)
+      @fetcher.object
+    end
+
+    it "should initialize the object with no arguments to the constructor if a variable argument count is needed" do
+      @new_method.stub(:arity).and_return(-1)
+      @klass.should_receive(:new).with(no_args).and_return(@object)
       @fetcher.object
     end
 

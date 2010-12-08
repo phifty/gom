@@ -39,7 +39,7 @@ module GOM
         @object = GOM::Object::Mapping.object_by_id @id
         unless @object
           klass = object_class
-          arity = klass.method(:new).arity
+          arity = [ klass.method(:new).arity, 0 ].max
           @object = klass.new *([ nil ] * arity)
         end
       end
