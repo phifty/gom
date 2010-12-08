@@ -20,7 +20,7 @@ describe GOM::Object::Id do
       id.object_id.should == "object_1"
     end
 
-    it "should initialize with seperated parameters" do
+    it "should initialize with separated parameters" do
       id = GOM::Object::Id.new "test_storage", "object_1"
       id.storage_name.should == "test_storage"
       id.object_id.should == "object_1"
