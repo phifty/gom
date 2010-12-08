@@ -105,4 +105,7 @@ will return the instance variable <tt>@name</tt> ("Mr. Storyteller") from the au
 
 == Development
 
+Development has been done test-driven and the code follows at most the Clean Code paradigms. Code smells has been
+removed by using the reek[http://github.com/kevinrutherford/reek] code smell detector.
+
 This project is still experimental and under development. Any bug report and contribution is welcome!
