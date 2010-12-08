@@ -12,6 +12,10 @@ module GOM
         @configuration = configuration
       end
 
+      def setup
+        not_implemented "setup"
+      end
+
       def fetch
         not_implemented "fetch"
       end

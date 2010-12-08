@@ -15,8 +15,12 @@ module GOM
         hash.each{ |key, value| @hash[key.to_sym] = value }
       end
 
+      def setup
+        adapter.setup
+      end
+
       def adapter
-        @adapter ||= self.adapter_class.new self
+        @adapter ||= adapter_class.new self
       end
 
       def adapter_class
@@ -35,6 +39,12 @@ module GOM
         @configurations = { }
         YAML::load_file(file_name).each do |name, values|
           @configurations[name.to_sym] = self.new name, values
+        end
+      end
+
+      def self.setup_all
+        @configurations.values.each do |configuration|
+          configuration.setup
         end
       end
 

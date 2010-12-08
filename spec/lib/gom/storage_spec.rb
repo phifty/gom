@@ -7,6 +7,19 @@ describe GOM::Storage do
     @object = Object.new
   end
 
+  describe "setup" do
+
+    before :each do
+      described_class::Configuration.stub(:setup_all)
+    end
+
+    it "should setup all storage configurations" do
+      described_class::Configuration.should_receive(:setup_all)
+      described_class.setup
+    end
+
+  end
+
   describe "fetch" do
 
     before :each do

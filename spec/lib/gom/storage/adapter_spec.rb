@@ -30,6 +30,16 @@ describe GOM::Storage::Adapter do
 
   end
 
+  describe "setup" do
+
+    it "should raise a NotImplementedError" do
+      lambda do
+        @adapter.setup
+      end.should raise_error(NotImplementedError)
+    end
+
+  end
+
   describe "fetch" do
 
     it "should raise a NotImplementedError" do

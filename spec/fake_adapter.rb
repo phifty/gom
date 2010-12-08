@@ -3,6 +3,10 @@ class FakeAdapter < GOM::Storage::Adapter
 
   STORE = { }
 
+  def setup
+
+  end
+
   def fetch(id)
     STORE[id]
   end
