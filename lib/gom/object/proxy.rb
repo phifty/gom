@@ -30,9 +30,7 @@ module GOM
       private
 
       def fetch_object
-        fetcher = GOM::Storage::Fetcher.new @id
-        fetcher.perform
-        @object = fetcher.object
+        @object = GOM::Storage::Fetcher.new(@id).object
       end
 
       def fetch_id

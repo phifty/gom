@@ -58,12 +58,9 @@ Once an object is stored, it can be easily brought back to life by using it's id
   book = GOM::Storage.fetch book_id
 
 The storage name is encoded (prefixed) in the id and don't have to be specified. The classname of the object was also
-saved during the storage and the fetch instantiate a new object using the constructor with no arguments. If this
-doesn't fit your needs, the already initiated object can be passed to the fetch method.
-
-  book = GOM::Storage.fetch book_id, Book.new(...)
-
-The instance variables of the initialized of the given object, will be set with the stored values.
+saved during the storage and the fetch instantiate a new object using the constructor. If the constructor requires
+arguments, <tt>nil</tt> will be passed for each of them. The internal state (the instance variables) will be
+overwritten anyway.
 
 === Removing an object
 

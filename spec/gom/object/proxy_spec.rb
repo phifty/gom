@@ -55,7 +55,7 @@ describe GOM::Object::Proxy do
 
       @object = mock Object, :test_method => nil
 
-      @fetcher = mock GOM::Storage::Fetcher, :perform => nil, :object => @object
+      @fetcher = mock GOM::Storage::Fetcher, :object => @object
       GOM::Storage::Fetcher.stub(:new).and_return(@fetcher)
 
       @proxy = GOM::Object::Proxy.new @id
@@ -63,7 +63,7 @@ describe GOM::Object::Proxy do
 
     it "should fetch the object before the call is passed to it" do
       GOM::Storage::Fetcher.should_receive(:new).with(@id).and_return(@fetcher)
-      @fetcher.should_receive(:perform)
+      @fetcher.should_receive(:object).and_return(@object)
       @object.should_receive(:test_method).with(:test_argument).and_return(:test_result)
       @proxy.test_method(:test_argument).should == :test_result
     end
@@ -72,7 +72,7 @@ describe GOM::Object::Proxy do
 
       it "should return the original object" do
         GOM::Storage::Fetcher.should_receive(:new).with(@id).and_return(@fetcher)
-        @fetcher.should_receive(:perform)
+        @fetcher.should_receive(:object).and_return(@object)
         @proxy.object.should == @object
       end
 

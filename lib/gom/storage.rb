@@ -12,11 +12,9 @@ module GOM
     # This error can be thrown by an adapter if it's doesn't support write operations
     class ReadOnlyError < StandardError; end
 
-    def self.fetch(id_string, object = nil)
+    def self.fetch(id_string)
       id = id_string.is_a?(String) ? GOM::Object::Id.new(id_string) : nil
-      fetcher = Fetcher.new id, object
-      fetcher.perform
-      fetcher.object
+      Fetcher.new(id).object
     end
 
     def self.store(object, storage_name = nil)

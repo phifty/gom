@@ -11,73 +11,70 @@ describe GOM::Storage::Fetcher do
       :properties => { :test => "test value" }
     }
 
-    @adapter = Object.new
-    @adapter.stub!(:fetch).and_return(@object_hash)
-    @configuration = Object.new
-    @configuration.stub!(:adapter).and_return(@adapter)
-    GOM::Storage::Configuration.stub!(:[]).and_return(@configuration)
+    @klass = mock Class, :new => @object, :method => mock(Method, :arity => 3)
+    Object.stub(:const_get).and_return(@klass)
 
-    GOM::Object::Mapping.stub!(:object_by_id)
-    GOM::Object::Mapping.stub!(:put)
+    @adapter = mock GOM::Storage::Adapter, :fetch => @object_hash
+    @configuration = mock GOM::Storage::Configuration, :adapter => @adapter
+    GOM::Storage::Configuration.stub(:[]).and_return(@configuration)
 
-    @injector = Object.new
-    @injector.stub!(:perform)
-    @injector.stub!(:object).and_return(@object)
-    GOM::Object::Injector.stub!(:new).and_return(@injector)
+    GOM::Object::Mapping.stub(:object_by_id)
+    GOM::Object::Mapping.stub(:put)
 
-    @fetcher = GOM::Storage::Fetcher.new @id
+    @injector = mock GOM::Object::Injector, :perform => nil, :object => @object
+    GOM::Object::Injector.stub(:new).and_return(@injector)
+
+    @fetcher = described_class.new @id
+    @fetcher.stub(:object_class).and_return(@klass)
   end
 
-  describe "perform" do
+  describe "object" do
 
     it "should do no fetch if no id is given" do
-      @fetcher.instance_variable_set :@id, nil
+      @fetcher.id = nil
       @adapter.should_not_receive(:fetch)
-      @fetcher.perform
+      @fetcher.object
     end
 
     it "should route the call to the correct storage" do
       GOM::Storage::Configuration.should_receive(:[]).with("test_storage")
-      @fetcher.perform
+      @fetcher.object
     end
 
     it "should fetch the id from the adapter instance" do
       @adapter.should_receive(:fetch).with("object_1").and_return(@object_hash)
-      @fetcher.perform
+      @fetcher.object
     end
 
-    it "should not initialize the object if an instance is given" do
-      object = Object.new
-      @fetcher.object = object
-      GOM::Object::Injector.should_receive(:new).with(object, @object_hash).and_return(@injector)
-      @fetcher.perform
+    it "should initialize the object with nil-arguments to the constructor" do
+      @klass.should_receive(:new).with(nil, nil, nil).and_return(@object)
+      @fetcher.object
     end
 
     it "should check if a mapping exists for the object" do
-      object = Object.new
-      GOM::Object::Mapping.should_receive(:object_by_id).with(@id).and_return(object)
-      @fetcher.perform
+      GOM::Object::Mapping.should_receive(:object_by_id).with(@id).and_return(Object.new)
+      @fetcher.object
     end
 
     it "should initialize the object if not given" do
-      GOM::Object::Injector.should_receive(:new).with(an_instance_of(Object), @object_hash).and_return(@injector)
-      @fetcher.perform
+      GOM::Object::Injector.should_receive(:new).with(anything, @object_hash).and_return(@injector)
+      @fetcher.object
     end
 
     it "should create mapping between object and id" do
       GOM::Object::Mapping.should_receive(:put).with(@object, @id)
-      @fetcher.perform
+      @fetcher.object
     end
 
     it "should set the object's instance variables" do
-      @fetcher.perform
-      @fetcher.object.instance_variable_get(:@test).should == "test value"
+      object = @fetcher.object
+      object.instance_variable_get(:@test).should == "test value"
     end
 
     it "should return nil if storage adapter returned nil" do
-      @adapter.stub!(:fetch).and_return(nil)
-      @fetcher.perform
-      @fetcher.object.should be_nil
+      @adapter.stub(:fetch).and_return(nil)
+      object = @fetcher.object
+      object.should be_nil
     end
 
   end

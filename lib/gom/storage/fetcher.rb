@@ -6,12 +6,18 @@ module GOM
     # Fetches an object from the storage.
     class Fetcher
 
-      attr_accessor :object
-      attr_reader :id
+      attr_accessor :id
 
-      def initialize(id, object = nil)
-        @id, @object = id, object
+      def initialize(id)
+        @id = id
       end
+
+      def object
+        perform
+        @object
+      end
+
+      private
 
       def perform
         fetch_object_hash
@@ -20,8 +26,6 @@ module GOM
         inject_object_hash
         set_mapping
       end
-
-      private
 
       def fetch_object_hash
         @object_hash = @id ? adapter.fetch(@id.object_id) : nil
@@ -32,8 +36,12 @@ module GOM
       end
 
       def initialize_object
-        @object = GOM::Object::Mapping.object_by_id @id unless @object
-        @object = Object.const_get(@object_hash[:class].to_sym).new unless @object
+        @object = GOM::Object::Mapping.object_by_id @id
+        unless @object
+          klass = object_class
+          arity = klass.method(:new).arity
+          @object = klass.new *([ nil ] * arity)
+        end
       end
 
       def inject_object_hash
@@ -48,6 +56,10 @@ module GOM
 
       def adapter
         @adapter ||= GOM::Storage::Configuration[@id.storage_name].adapter
+      end
+
+      def object_class
+        Object.const_get @object_hash[:class]
       end
 
     end
