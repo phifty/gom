@@ -1,6 +1,10 @@
 
 shared_examples_for "a read-only adapter connected to a stateless storage" do
 
+  before :all do
+    GOM::Storage.setup
+  end
+
   describe "fetching an object" do
 
     it "should return the correct object" do
