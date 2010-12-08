@@ -1,9 +1,9 @@
-require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "spec_helper"))
+require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "spec_helper"))
 
 describe GOM::Storage::Configuration do
 
   before :each do
-    GOM::Storage::Configuration.read File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "storage.configuration"))
+    GOM::Storage::Configuration.read File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "storage.configuration"))
     @configuration = GOM::Storage::Configuration[:test_storage]
   end
 
