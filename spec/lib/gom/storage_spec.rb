@@ -57,9 +57,8 @@ describe GOM::Storage do
 
     before :each do
       @storage_name = "another_test_storage"
-      @saver = Object.new
-      @saver.stub!(:perform)
-      described_class::Saver.stub!(:new).and_return(@saver)
+      @saver = mock described_class::Saver, :perform => nil
+      described_class::Saver.stub(:new).and_return(@saver)
     end
 
     it "should initialize the saver correctly" do
@@ -77,12 +76,11 @@ describe GOM::Storage do
   describe "remove" do
 
     before :each do
-      @id = Object.new
-      GOM::Object::Id.stub!(:new).and_return(@id)
+      @id = mock GOM::Object::Id
+      GOM::Object::Id.stub(:new).and_return(@id)
 
-      @remover = Object.new
-      @remover.stub!(:perform)
-      described_class::Remover.stub!(:new).and_return(@remover)
+      @remover = mock described_class::Remover, :perform => nil
+      described_class::Remover.stub(:new).and_return(@remover)
     end
 
     it "should initialize the remover correctly" do
@@ -98,7 +96,33 @@ describe GOM::Storage do
     it "should convert a given string into an id" do
       GOM::Object::Id.should_receive(:new).with("test_storage:object_1").and_return(@id)
       described_class::Remover.should_receive(:new).with(@id).and_return(@remover)
-      described_class::remove "test_storage:object_1"
+      described_class.remove "test_storage:object_1"
+    end
+
+  end
+
+  describe "collection" do
+
+    before :each do
+      @collection = mock GOM::Object::Collection
+      @adapter = mock GOM::Storage::Adapter, :collection => @collection
+      @configuration = mock GOM::Storage::Configuration, :adapter => @adapter
+      GOM::Storage::Configuration.stub(:[]).with(:test_storage).and_return(@configuration)
+    end
+
+    it "should select the right configuration" do
+      GOM::Storage::Configuration.should_receive(:[]).with(:test_storage).and_return(@configuration)
+      described_class.collection :test_storage, :argument_one, :argument_two
+    end
+
+    it "should pass all arguments to the adapters collection method" do
+      @adapter.should_receive(:collection).with(:argument_one, :argument_two)
+      described_class.collection :test_storage, :argument_one, :argument_two
+    end
+
+    it "should return the adapter's collection" do
+      collection = described_class.collection :test_storage
+      collection.should == @collection
     end
 
   end

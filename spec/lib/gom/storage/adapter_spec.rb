@@ -30,42 +30,16 @@ describe GOM::Storage::Adapter do
 
   end
 
-  describe "setup" do
+  [ :setup, :fetch, :store, :remove, :collection ].each do |method_name|
 
-    it "should raise a NotImplementedError" do
-      lambda do
-        @adapter.setup
-      end.should raise_error(NotImplementedError)
-    end
+    describe "#{method_name}" do
 
-  end
+      it "should raise a NotImplementedError" do
+        lambda do
+          @adapter.send method_name, *([ nil ] * @adapter.method(method_name).arity)
+        end.should raise_error(NotImplementedError)
+      end
 
-  describe "fetch" do
-
-    it "should raise a NotImplementedError" do
-      lambda do
-        @adapter.fetch
-      end.should raise_error(NotImplementedError)
-    end
-
-  end
-
-  describe "store" do
-
-    it "should raise a NotImplementedError" do
-      lambda do
-        @adapter.store
-      end.should raise_error(NotImplementedError)
-    end
-
-  end
-
-  describe "remove" do
-
-    it "should raise a NotImplementedError" do
-      lambda do
-        @adapter.remove
-      end.should raise_error(NotImplementedError)
     end
 
   end

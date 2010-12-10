@@ -6,6 +6,7 @@ GOM::Storage::Configuration.read File.join(File.dirname(__FILE__), "..", "storag
 describe "object" do
 
   before :each do
+    GOM::Storage.setup
     @object = Object.new
   end
 

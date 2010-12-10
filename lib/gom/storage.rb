@@ -3,11 +3,12 @@ module GOM
 
   module Storage
 
-    autoload :Configuration, File.join(File.dirname(__FILE__), "storage", "configuration")
     autoload :Adapter, File.join(File.dirname(__FILE__), "storage", "adapter")
+    autoload :Collection, File.join(File.dirname(__FILE__), "storage", "collection")
+    autoload :Configuration, File.join(File.dirname(__FILE__), "storage", "configuration")
     autoload :Fetcher, File.join(File.dirname(__FILE__), "storage", "fetcher")
-    autoload :Saver, File.join(File.dirname(__FILE__), "storage", "saver")
     autoload :Remover, File.join(File.dirname(__FILE__), "storage", "remover")
+    autoload :Saver, File.join(File.dirname(__FILE__), "storage", "saver")
 
     # This error can be thrown by an adapter if it's doesn't support write operations
     class ReadOnlyError < StandardError; end
@@ -28,6 +29,10 @@ module GOM
     def self.remove(object_or_id)
       object_or_id = GOM::Object::Id.new object_or_id if object_or_id.is_a?(String)
       Remover.new(object_or_id).perform
+    end
+
+    def self.collection(storage_name, *arguments)
+      Configuration[storage_name].adapter.collection *arguments
     end
 
   end

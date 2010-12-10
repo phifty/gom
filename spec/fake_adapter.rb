@@ -1,14 +1,31 @@
 
 class FakeAdapter < GOM::Storage::Adapter
 
-  STORE = { }
+  class ClassCollectionFetcher
 
-  def setup
+    def initialize(store, storage_name, class_name)
+      @store, @storage_name, @class_name = store, storage_name, class_name
+    end
+
+    def objects_or_ids
+      ids = [ ]
+      @store.each do |object_id, object_hash|
+        ids << GOM::Object::Id.new(@storage_name, object_id) if object_hash[:class] == @class_name
+      end
+      ids
+    end
 
   end
 
+  def setup
+    @store = { }
+  end
+
   def fetch(id)
-    STORE[id]
+    puts "fetch ::: #{id}"
+    result = @store[id]
+    puts "result ::: #{result.inspect}"
+    result
   end
 
   def store(object_hash)
@@ -20,16 +37,32 @@ class FakeAdapter < GOM::Storage::Adapter
     end
 
     # may generate an id
-    object_id = object_hash[:id] || "object_#{STORE.size + 1}"
+    object_id = object_hash[:id] || next_id
+
+    puts "store ::: #{object_id} ::: #{object_hash.inspect}"
 
     # store the object hash
-    STORE[object_id] = object_hash
+    @store[object_id] = object_hash
 
     object_id
   end
 
   def remove(id)
-    STORE.delete id
+    @store.delete id
+  end
+
+  def collection(view_name)
+    puts "collection ::: #{view_name}"
+    case view_name.to_sym
+      when :test_object_class_view
+        GOM::Object::Collection.new ClassCollectionFetcher.new(@store, configuration.name, "Object")
+    end
+  end
+
+  private
+
+  def next_id
+    "object_#{@store.size + 1}"
   end
 
 end

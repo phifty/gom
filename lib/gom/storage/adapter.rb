@@ -28,6 +28,10 @@ module GOM
         not_implemented "remove"
       end
 
+      def collection(view_name)
+        not_implemented "collection"
+      end
+
       private
 
       def not_implemented(method_name)
