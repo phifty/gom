@@ -115,7 +115,7 @@ shared_examples_for "an adapter connected to a stateful storage" do
   describe "fetching a class collection" do
 
     before :each do
-      @another_object = Object.new
+      @another_object = mock Object, :class => mock(Class, :to_s => "Test")
       @another_object.instance_variable_set :@number, 17
 
       GOM::Storage.store @object, :test_storage
@@ -139,9 +139,11 @@ shared_examples_for "an adapter connected to a stateful storage" do
         object_proxy.should be_instance_of(GOM::Object::Proxy)
         [
           @object.instance_variable_get(:@number),
-          @related_object.instance_variable_get(:@number),
-          @another_object.instance_variable_get(:@number)
+          @related_object.instance_variable_get(:@number)
         ].should include(object_proxy.object.instance_variable_get(:@number))
+        [
+          @another_object.instance_variable_get(:@number)
+        ].should_not include(object_proxy.object.instance_variable_get(:@number))
       end
     end
 
