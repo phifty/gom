@@ -44,6 +44,24 @@ describe GOM::Storage::Configuration do
 
   end
 
+  describe "views" do
+
+    it "should return a hash including class views" do
+      view = @configuration.views[:test_object_class_view]
+      view.should be_instance_of(described_class::View::Class)
+      view.class_name.should == "Object"
+    end
+
+    it "should return a hash including map reduce views" do
+      view = @configuration.views[:test_map_reduce_view]
+      view.should be_instance_of(described_class::View::MapReduce)
+      view.language.should == "javascript"
+      view.map.should == "function(document) { }"
+      view.reduce.should == "function(key, values) { }"
+    end
+
+  end
+
   describe "read" do
 
     it "should read the configuration file" do

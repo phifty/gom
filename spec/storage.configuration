@@ -2,3 +2,14 @@
 test_storage:
   adapter: fake_adapter
   test: test value
+  views:
+    test_object_class_view:
+      type: class
+      class: "Object"
+    test_map_reduce_view:
+      type: map_reduce
+      language: javascript
+      map:
+        function(document) { }
+      reduce:
+        function(key, values) { }

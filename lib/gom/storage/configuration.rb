@@ -8,6 +8,8 @@ module GOM
     # Stores all information to configure a storage
     class Configuration
 
+      autoload :View, File.join(File.dirname(__FILE__), "configuration", "view")
+
       attr_reader :name
 
       def initialize(name, hash)
@@ -33,6 +35,26 @@ module GOM
 
       def values_at(*arguments)
         arguments.map{ |argument| self[argument] }
+      end
+
+      def views
+        result = { }
+        (self["views"] || { }).each do |name, hash|
+          type = hash["type"]
+          view = send :"initialize_#{type}_view", hash
+          result[name.to_sym] = view
+        end
+        result
+      end
+
+      private
+
+      def initialize_class_view(hash)
+        View::Class.new hash["class"]
+      end
+
+      def initialize_map_reduce_view(hash)
+        View::MapReduce.new *hash.values_at("language", "map", "reduce")
       end
 
       def self.read(file_name)
