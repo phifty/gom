@@ -9,7 +9,7 @@ module GOM
       class Fetcher
 
         def objects_or_ids
-          raise NotImplementedError, "the objects method has to be defined by the adapter"
+          raise NotImplementedError, "the objects_or_ids method has to be defined by the collection fetcher"
         end
 
       end
