@@ -15,11 +15,8 @@ describe GOM::Storage::Fetcher do
     @configuration = mock GOM::Storage::Configuration, :adapter => @adapter
     GOM::Storage::Configuration.stub(:[]).and_return(@configuration)
 
-    GOM::Object::Mapping.stub(:object_by_id)
-    GOM::Object::Mapping.stub(:put)
-
-    @builder = mock GOM::Object::Builder, :object => @object
-    GOM::Object::Builder.stub(:new).and_return(@builder)
+    @builder = mock GOM::Object::CachedBuilder, :object => @object
+    GOM::Object::CachedBuilder.stub(:new).and_return(@builder)
 
     @fetcher = described_class.new @id
     @fetcher.stub(:object_class).and_return(@klass)
@@ -43,18 +40,8 @@ describe GOM::Storage::Fetcher do
       @fetcher.object
     end
 
-    it "should check if a mapping exists for the object" do
-      GOM::Object::Mapping.should_receive(:object_by_id).with(@id).and_return(Object.new)
-      @fetcher.object
-    end
-
-    it "should initialize the object builder if no mapping is given" do
-      GOM::Object::Builder.should_receive(:new).with(@object_hash, nil).and_return(@builder)
-      @fetcher.object
-    end
-
-    it "should create mapping between object and id" do
-      GOM::Object::Mapping.should_receive(:put).with(@object, @id)
+    it "should initialize the cached object builder" do
+      GOM::Object::CachedBuilder.should_receive(:new).with(@object_hash, @id).and_return(@builder)
       @fetcher.object
     end
 

@@ -15,9 +15,7 @@ module GOM
       def object
         fetch_object_hash
         return unless has_object_hash?
-        check_mapping
-        initialize_object
-        set_mapping
+        build_object
         @object
       end
 
@@ -31,16 +29,8 @@ module GOM
         !!@object_hash
       end
 
-      def check_mapping
-        @object = GOM::Object::Mapping.object_by_id @id
-      end
-
-      def initialize_object
-        @object = GOM::Object::Builder.new(@object_hash, @object).object
-      end
-
-      def set_mapping
-        GOM::Object::Mapping.put @object, @id
+      def build_object
+        @object = GOM::Object::CachedBuilder.new(@object_hash, @id).object
       end
 
       def adapter
