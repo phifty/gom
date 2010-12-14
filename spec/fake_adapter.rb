@@ -22,9 +22,7 @@ class FakeAdapter < GOM::Storage::Adapter
   end
 
   def fetch(id)
-    puts "fetch ::: #{id}"
     result = @store[id]
-    puts "result ::: #{result.inspect}"
     result
   end
 
@@ -39,8 +37,6 @@ class FakeAdapter < GOM::Storage::Adapter
     # may generate an id
     object_id = object_hash[:id] || next_id
 
-    puts "store ::: #{object_id} ::: #{object_hash.inspect}"
-
     # store the object hash
     @store[object_id] = object_hash
 
@@ -52,7 +48,6 @@ class FakeAdapter < GOM::Storage::Adapter
   end
 
   def collection(view_name)
-    puts "collection ::: #{view_name}"
     case view_name.to_sym
       when :test_object_class_view
         GOM::Object::Collection.new ClassCollectionFetcher.new(@store, configuration.name, "Object")

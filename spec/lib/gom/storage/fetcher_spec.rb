@@ -11,10 +11,6 @@ describe GOM::Storage::Fetcher do
       :properties => { :test => "test value" }
     }
 
-    @new_method = mock Method, :arity => 3
-    @klass = mock Class, :new => @object, :method => @new_method
-    Object.stub(:const_get).and_return(@klass)
-
     @adapter = mock GOM::Storage::Adapter, :fetch => @object_hash
     @configuration = mock GOM::Storage::Configuration, :adapter => @adapter
     GOM::Storage::Configuration.stub(:[]).and_return(@configuration)
@@ -22,8 +18,8 @@ describe GOM::Storage::Fetcher do
     GOM::Object::Mapping.stub(:object_by_id)
     GOM::Object::Mapping.stub(:put)
 
-    @injector = mock GOM::Object::Injector, :perform => nil, :object => @object
-    GOM::Object::Injector.stub(:new).and_return(@injector)
+    @builder = mock GOM::Object::Builder, :object => @object
+    GOM::Object::Builder.stub(:new).and_return(@builder)
 
     @fetcher = described_class.new @id
     @fetcher.stub(:object_class).and_return(@klass)
@@ -47,24 +43,13 @@ describe GOM::Storage::Fetcher do
       @fetcher.object
     end
 
-    it "should initialize the object with nil-arguments to the constructor" do
-      @klass.should_receive(:new).with(nil, nil, nil).and_return(@object)
-      @fetcher.object
-    end
-
-    it "should initialize the object with no arguments to the constructor if a variable argument count is needed" do
-      @new_method.stub(:arity).and_return(-1)
-      @klass.should_receive(:new).with(no_args).and_return(@object)
-      @fetcher.object
-    end
-
     it "should check if a mapping exists for the object" do
       GOM::Object::Mapping.should_receive(:object_by_id).with(@id).and_return(Object.new)
       @fetcher.object
     end
 
-    it "should initialize the object if not given" do
-      GOM::Object::Injector.should_receive(:new).with(anything, @object_hash).and_return(@injector)
+    it "should initialize the object builder if no mapping is given" do
+      GOM::Object::Builder.should_receive(:new).with(@object_hash, nil).and_return(@builder)
       @fetcher.object
     end
 
