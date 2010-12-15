@@ -3,11 +3,12 @@ module GOM
 
   module Storage
 
+    # Stores all information to configure a storage.
     class Configuration
 
       module View
 
-        # :nodoc:
+        # Contains all parameters for a map reduce view.
         class MapReduce
 
           attr_accessor :language

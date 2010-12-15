@@ -5,7 +5,7 @@ module GOM
 
   module Storage
 
-    # Stores all information to configure a storage
+    # Stores all information to configure a storage.
     class Configuration
 
       autoload :View, File.join(File.dirname(__FILE__), "configuration", "view")
@@ -38,22 +38,29 @@ module GOM
       end
 
       def views
-        result = { }
-        (self["views"] || { }).each do |name, hash|
-          type = hash["type"]
-          view = send :"initialize_#{type}_view", hash
-          result[name.to_sym] = view
+        @views ||= begin
+          result = { }
+          (self["views"] || { }).each do |name, hash|
+            result[name.to_sym] = self.class.view hash
+          end
+          result
         end
-        result
       end
 
       private
 
-      def initialize_class_view(hash)
+      def self.view(hash)
+        type = hash["type"]
+        method_name = :"#{type}_view"
+        raise NotImplementedError, "the view type '#{type}' doesn't exists" unless self.respond_to?(method_name)
+        self.send method_name, hash
+      end
+
+      def self.class_view(hash)
         View::Class.new hash["class"]
       end
 
-      def initialize_map_reduce_view(hash)
+      def self.map_reduce_view(hash)
         View::MapReduce.new *hash.values_at("language", "map", "reduce")
       end
 

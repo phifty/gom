@@ -3,6 +3,7 @@ module GOM
 
   module Storage
 
+    # Stores all information to configure a storage.
     class Configuration
 
       module View

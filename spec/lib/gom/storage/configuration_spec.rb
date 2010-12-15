@@ -60,6 +60,18 @@ describe GOM::Storage::Configuration do
       view.reduce.should == "function(key, values) { }"
     end
 
+    it "should raise a #{NotImplementedError} if the view type is invalid" do
+      @configuration["views"]["test_invalid_view"] = { "type" => "invalid" }
+      lambda do
+        @configuration.views[:test_invalid_view]
+      end.should raise_error(NotImplementedError)
+    end
+
+    it "should return nil if given view name doesn't exists" do
+      view = @configuration.views[:invalid]
+      view.should be_nil
+    end
+
   end
 
   describe "read" do

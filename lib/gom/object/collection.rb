@@ -24,16 +24,24 @@ module GOM
       def load_object_proxies
         @object_proxies ||= begin
           if @fetcher.object_hashes
-            @fetcher.object_hashes.map do |object_hash|
-              GOM::Object::Proxy.new GOM::Object::CachedBuilder.new(object_hash).object
-            end
+            object_proxies_from_object_hashes
           elsif @fetcher.ids
-            @fetcher.ids.map do |id|
-              GOM::Object::Proxy.new id
-            end
+            object_proxies_from_ids
           else
             raise NotImplementedError, "the collection fetcher doesn't provide object hashes nor ids."
           end
+        end
+      end
+
+      def object_proxies_from_object_hashes
+        @fetcher.object_hashes.map do |object_hash|
+          GOM::Object::Proxy.new GOM::Object::CachedBuilder.new(object_hash).object
+        end
+      end
+
+      def object_proxies_from_ids
+        @fetcher.ids.map do |id|
+          GOM::Object::Proxy.new id
         end
       end
 
