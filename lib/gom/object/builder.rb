@@ -3,14 +3,14 @@ module GOM
 
   module Object
 
-    # Build an object out of the given object hash.
+    # Build an object out of the given draft.
     class Builder
 
-      attr_accessor :object_hash
+      attr_accessor :draft
       attr_writer :object
 
-      def initialize(object_hash, object = nil)
-        @object_hash, @object = object_hash, object
+      def initialize(draft, object = nil)
+        @draft, @object = draft, object
       end
 
       def object
@@ -23,19 +23,19 @@ module GOM
       private
 
       def initialize_object
-        klass = Object.const_get @object_hash[:class]
+        klass = Object.const_get @draft.class_name
         arity = [ klass.method(:new).arity, 0 ].max
         @object = klass.new *([ nil ] * arity)
       end
 
       def set_properties
-        (@object_hash[:properties] || { }).each do |name, value|
+        @draft.properties.each do |name, value|
           @object.instance_variable_set :"@#{name}", value
         end
       end
 
       def set_relations
-        (@object_hash[:relations] || { }).each do |name, value|
+        @draft.relations.each do |name, value|
           @object.instance_variable_set :"@#{name}", value
         end
       end

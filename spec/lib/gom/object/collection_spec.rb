@@ -4,10 +4,8 @@ describe GOM::Object::Collection do
 
   before :each do
     @object = mock Object
-    @object_hash = mock Hash
-    @object_hashes = [ @object_hash ]
 
-    @fetcher = mock GOM::Storage::Collection::Fetcher, :total_count => 1, :object_hashes => @object_hashes, :ids => nil
+    @fetcher = mock Object, :total_count => 1
 
     @proxy = mock GOM::Object::Proxy
     GOM::Object::Proxy.stub(:new).and_return(@proxy)
@@ -31,15 +29,22 @@ describe GOM::Object::Collection do
 
     context "with no previous fetched objects" do
 
-      context "with a fetcher that provides object hashes" do
+      context "with a fetcher that provides drafts" do
 
-        it "should get the object hashes from the fetcher" do
-          @fetcher.should_receive(:object_hashes).and_return(@object_hashes)
+        before :each do
+          @draft = mock Hash
+          @drafts = [ @draft ]
+
+          @fetcher.stub(:drafts).and_return(@drafts)
+        end
+
+        it "should get the drafts from the fetcher" do
+          @fetcher.should_receive(:drafts).and_return(@drafts)
           @collection.first
         end
 
-        it "should initialize the cached object builder with each object hash" do
-          GOM::Object::CachedBuilder.should_receive(:new).with(@object_hash).and_return(@builder)
+        it "should initialize the cached object builder with each draft" do
+          GOM::Object::CachedBuilder.should_receive(:new).with(@draft).and_return(@builder)
           @collection.first
         end
 
@@ -61,7 +66,6 @@ describe GOM::Object::Collection do
           @id = mock GOM::Object::Id
           @ids = [ @id ]
 
-          @fetcher.stub(:object_hashes).and_return(nil)
           @fetcher.stub(:ids).and_return(@ids)
         end
 
@@ -87,12 +91,7 @@ describe GOM::Object::Collection do
 
       end
 
-      context "with a fetcher that doesn't provide object hashes or ids" do
-
-        before :each do
-          @fetcher.stub(:object_hashes).and_return(nil)
-          @fetcher.stub(:ids).and_return(nil)
-        end
+      context "with a fetcher that doesn't provide drafts or ids" do
 
         it "should raise a #{NotImplementedError}" do
           lambda do
@@ -107,11 +106,16 @@ describe GOM::Object::Collection do
     context "with previously fetched objects" do
 
       before :each do
+        @draft = mock Hash
+        @drafts = [ @draft ]
+
+        @fetcher.stub(:drafts).and_return(@drafts)
+
         @collection.first
       end
 
       it "should not call the fetcher" do
-        @fetcher.should_not_receive(:objects_or_ids)
+        @fetcher.should_not_receive(:drafts)
         @collection.first
       end
 

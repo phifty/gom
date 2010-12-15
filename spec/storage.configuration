@@ -8,7 +8,6 @@ test_storage:
       class: "Object"
     test_map_reduce_view:
       type: map_reduce
-      language: javascript
       map:
         function(document) { }
       reduce:

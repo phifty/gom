@@ -12,23 +12,23 @@ module GOM
         @configuration = configuration
       end
 
-      def setup
+      def setup(*arguments)
         not_implemented "setup"
       end
 
-      def fetch
+      def fetch(*arguments)
         not_implemented "fetch"
       end
 
-      def store
+      def store(*arguments)
         not_implemented "store"
       end
 
-      def remove
+      def remove(*arguments)
         not_implemented "remove"
       end
 
-      def collection(view_name)
+      def collection(*arguments)
         not_implemented "collection"
       end
 

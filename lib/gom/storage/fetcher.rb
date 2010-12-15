@@ -13,24 +13,24 @@ module GOM
       end
 
       def object
-        fetch_object_hash
-        return unless has_object_hash?
+        fetch_draft
+        return unless has_draft?
         build_object
         @object
       end
 
       private
 
-      def fetch_object_hash
-        @object_hash = @id ? adapter.fetch(@id.object_id) : nil
+      def fetch_draft
+        @draft = @id ? adapter.fetch(@id.object_id) : nil
       end
 
-      def has_object_hash?
-        !!@object_hash
+      def has_draft?
+        !!@draft
       end
 
       def build_object
-        @object = GOM::Object::CachedBuilder.new(@object_hash, @id).object
+        @object = GOM::Object::CachedBuilder.new(@draft, @id).object
       end
 
       def adapter

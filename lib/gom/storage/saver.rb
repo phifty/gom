@@ -17,7 +17,7 @@ module GOM
         fetch_id
         update_storage_name
         inspect_object
-        store_object_hash
+        store_draft
         store_id
       end
 
@@ -33,14 +33,12 @@ module GOM
       end
 
       def inspect_object
-        inspector = GOM::Object::Inspector.new @object
-        inspector.perform
-        @object_hash = inspector.object_hash
-        @object_hash[:id] = @id.object_id if @id
+        @draft = GOM::Object::Inspector.new(@object).draft
+        @draft.id = @id.object_id if @id
       end
 
-      def store_object_hash
-        object_id = adapter.store @object_hash
+      def store_draft
+        object_id = adapter.store @draft
         @id = GOM::Object::Id.new @storage_name.to_s, object_id
       end
 

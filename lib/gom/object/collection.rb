@@ -23,20 +23,28 @@ module GOM
 
       def load_object_proxies
         @object_proxies ||= begin
-          if @fetcher.object_hashes
-            object_proxies_from_object_hashes
-          elsif @fetcher.ids
+          if fetcher_has_drafts?
+            object_proxies_from_drafts
+          elsif fetcher_has_ids?
             object_proxies_from_ids
           else
-            raise NotImplementedError, "the collection fetcher doesn't provide object hashes nor ids."
+            raise NotImplementedError, "the collection fetcher doesn't provide drafts nor ids."
           end
         end
       end
 
-      def object_proxies_from_object_hashes
-        @fetcher.object_hashes.map do |object_hash|
-          GOM::Object::Proxy.new GOM::Object::CachedBuilder.new(object_hash).object
+      def fetcher_has_drafts?
+        @fetcher.respond_to? :drafts
+      end
+
+      def object_proxies_from_drafts
+        @fetcher.drafts.map do |draft|
+          GOM::Object::Proxy.new GOM::Object::CachedBuilder.new(draft).object
         end
+      end
+
+      def fetcher_has_ids?
+        @fetcher.respond_to? :ids
       end
 
       def object_proxies_from_ids

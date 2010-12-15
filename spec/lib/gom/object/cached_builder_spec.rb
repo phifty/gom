@@ -3,7 +3,7 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "sp
 describe GOM::Object::CachedBuilder do
 
   before :each do
-    @object_hash = mock Hash
+    @draft = mock GOM::Object::Draft
     @id = mock GOM::Object::Id
 
     @object = mock Object
@@ -13,7 +13,7 @@ describe GOM::Object::CachedBuilder do
     @builder = mock GOM::Object::Builder, :object => @object
     GOM::Object::Builder.stub(:new).and_return(@builder)
 
-    @cached_builder = described_class.new @object_hash, @id
+    @cached_builder = described_class.new @draft, @id
   end
 
   describe "object" do
@@ -24,7 +24,7 @@ describe GOM::Object::CachedBuilder do
     end
 
     it "should initialize the object builder" do
-      GOM::Object::Builder.should_receive(:new).with(@object_hash, @object).and_return(@builder)
+      GOM::Object::Builder.should_receive(:new).with(@draft, @object).and_return(@builder)
       @cached_builder.object
     end
 

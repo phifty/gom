@@ -3,14 +3,10 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "..
 describe GOM::Storage::Configuration::View::MapReduce do
 
   before :each do
-    @map_reduce = described_class.new "javascript", "map function", "reduce function"
+    @map_reduce = described_class.new "map function", "reduce function"
   end
 
   describe "initialize" do
-
-    it "should set the view's language" do
-      @map_reduce.language.should == "javascript"
-    end
 
     it "should set the view's map function" do
       @map_reduce.map.should == "map function"

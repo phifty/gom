@@ -6,12 +6,9 @@ describe GOM::Storage::Fetcher do
     @id = GOM::Object::Id.new "test_storage", "object_1"
     @object = Object.new
     @object.instance_variable_set :@test, "test value"
-    @object_hash = {
-      :class => "Object",
-      :properties => { :test => "test value" }
-    }
+    @draft = GOM::Object::Draft.new nil, "Object", { :test => "test value" }
 
-    @adapter = mock GOM::Storage::Adapter, :fetch => @object_hash
+    @adapter = mock GOM::Storage::Adapter, :fetch => @draft
     @configuration = mock GOM::Storage::Configuration, :adapter => @adapter
     GOM::Storage::Configuration.stub(:[]).and_return(@configuration)
 
@@ -36,12 +33,12 @@ describe GOM::Storage::Fetcher do
     end
 
     it "should fetch the id from the adapter instance" do
-      @adapter.should_receive(:fetch).with("object_1").and_return(@object_hash)
+      @adapter.should_receive(:fetch).with("object_1").and_return(@draft)
       @fetcher.object
     end
 
     it "should initialize the cached object builder" do
-      GOM::Object::CachedBuilder.should_receive(:new).with(@object_hash, @id).and_return(@builder)
+      GOM::Object::CachedBuilder.should_receive(:new).with(@draft, @id).and_return(@builder)
       @fetcher.object
     end
 

@@ -61,7 +61,7 @@ module GOM
       end
 
       def self.map_reduce_view(hash)
-        View::MapReduce.new *hash.values_at("language", "map", "reduce")
+        View::MapReduce.new *hash.values_at("map", "reduce")
       end
 
       def self.read(file_name)

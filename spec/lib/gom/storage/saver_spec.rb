@@ -7,29 +7,18 @@ describe GOM::Storage::Saver do
     @object = Object.new
     @object.instance_variable_set :@test, "test value"
     @object.freeze
-    @object_hash = {
-      :class => "Object",
-      :id => "object_1",
-      :properties => {
-        :test => "test value"
-      }
-    }
+    @draft = GOM::Object::Draft.new "object_1", "Object", { :test => "test value" }
 
-    GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return(@id)
-    GOM::Object::Mapping.stub!(:put)
+    GOM::Object::Mapping.stub(:id_by_object).with(@object).and_return(@id)
+    GOM::Object::Mapping.stub(:put)
 
-    @adapter = Object.new
-    @adapter.stub!(:store).and_return("object_1")
-    @configuration = Object.new
-    @configuration.stub!(:name).and_return("default_test_storage")
-    @configuration.stub!(:adapter).and_return(@adapter)
-    GOM::Storage::Configuration.stub!(:[]).and_return(@configuration)
-    GOM::Storage::Configuration.stub!(:default).and_return(@configuration)
+    @adapter = mock GOM::Storage::Adapter, :store => "object_1"
+    @configuration = mock GOM::Storage::Configuration, :name => "default_test_storage", :adapter => @adapter
+    GOM::Storage::Configuration.stub(:[]).and_return(@configuration)
+    GOM::Storage::Configuration.stub(:default).and_return(@configuration)
 
-    @inspector = Object.new
-    @inspector.stub!(:perform)
-    @inspector.stub!(:object_hash).and_return(@object_hash)
-    GOM::Object::Inspector.stub!(:new).and_return(@inspector)
+    @inspector = mock GOM::Object::Inspector, :draft => @draft
+    GOM::Object::Inspector.stub(:new).and_return(@inspector)
 
     @saver = GOM::Storage::Saver.new @object
   end
@@ -48,7 +37,7 @@ describe GOM::Storage::Saver do
     end
 
     it "should select the default storage if no storage name can be detected" do
-      GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return(nil)
+      GOM::Object::Mapping.stub(:id_by_object).with(@object).and_return(nil)
       @saver.perform
       @saver.storage_name.should == "default_test_storage"
     end
@@ -59,20 +48,15 @@ describe GOM::Storage::Saver do
     end
 
     it "should store the object with the adapter instance" do
-      @adapter.should_receive(:store).with(@object_hash).and_return("object_1")
+      @adapter.should_receive(:store).with(@draft).and_return("object_1")
       @saver.perform
     end
 
     it "should store the object without an id if no mapping exists" do
-      GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return(nil)
-      @object_hash.delete :id
+      GOM::Object::Mapping.stub(:id_by_object).with(@object).and_return(nil)
+      @draft.id = nil
 
-      @adapter.should_receive(:store).with(@object_hash).and_return("object_1")
-      @saver.perform
-    end
-
-    it "should inspect the object" do
-      @inspector.should_receive(:perform)
+      @adapter.should_receive(:store).with(@draft).and_return("object_1")
       @saver.perform
     end
 

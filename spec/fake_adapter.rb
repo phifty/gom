@@ -7,12 +7,12 @@ class FakeAdapter < GOM::Storage::Adapter
       @store, @storage_name, @class_name = store, storage_name, class_name
     end
 
-    def object_hashes
-      object_hashes = [ ]
-      @store.each do |object_id, object_hash|
-        object_hashes << object_hash if object_hash[:class] == @class_name
+    def drafts
+      drafts = [ ]
+      @store.each do |object_id, draft|
+        drafts << draft if draft.class_name == @class_name
       end
-      object_hashes
+      drafts
     end
 
   end
@@ -26,19 +26,19 @@ class FakeAdapter < GOM::Storage::Adapter
     result
   end
 
-  def store(object_hash)
+  def store(draft)
     # store relations
-    (object_hash[:relations] || { }).each do |key, related_object_proxy|
+    draft.relations.each do |key, related_object_proxy|
       GOM::Storage.store related_object_proxy.object, configuration.name
       id = GOM::Object::Mapping.id_by_object related_object_proxy.object
-      object_hash[:relations][key] = GOM::Object::Proxy.new id
+      draft.relations[key] = GOM::Object::Proxy.new id
     end
 
     # may generate an id
-    object_id = object_hash[:id] || next_id
+    object_id = draft.id || next_id
 
-    # store the object hash
-    @store[object_id] = object_hash
+    # store the draft
+    @store[object_id] = draft
 
     object_id
   end

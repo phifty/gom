@@ -3,15 +3,15 @@ module GOM
 
   module Object
 
-    # Build an object out of the given object hash using Builder. Uses the object-id mapping
+    # Build an object out of the given draft using Builder. Uses the object-id mapping
     # for caching the results.
     class CachedBuilder
 
-      attr_accessor :object_hash
+      attr_accessor :draft
       attr_accessor :id
 
-      def initialize(object_hash, id = nil)
-        @object_hash, @id = object_hash, id
+      def initialize(draft, id = nil)
+        @draft, @id = draft, id
       end
 
       def object
@@ -28,7 +28,7 @@ module GOM
       end
 
       def build_object
-        @object = GOM::Object::Builder.new(@object_hash, @object).object
+        @object = GOM::Object::Builder.new(@draft, @object).object
       end
 
       def set_mapping

@@ -6,14 +6,12 @@ describe GOM::Storage::Remover do
     @id = GOM::Object::Id.new "test_storage", "object_1"
     @object = Object.new
 
-    @adapter = Object.new
-    @adapter.stub!(:remove)
-    @configuration = Object.new
-    @configuration.stub!(:adapter).and_return(@adapter)
-    GOM::Storage::Configuration.stub!(:[]).and_return(@configuration)
+    @adapter = mock GOM::Storage::Adapter, :remove => nil
+    @configuration = mock GOM::Storage::Configuration, :adapter => @adapter
+    GOM::Storage::Configuration.stub(:[]).and_return(@configuration)
 
-    GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return(@id)
-    GOM::Object::Mapping.stub!(:remove_by_object)
+    GOM::Object::Mapping.stub(:id_by_object).with(@object).and_return(@id)
+    GOM::Object::Mapping.stub(:remove_by_object)
 
     @remover = GOM::Storage::Remover.new @object
   end
@@ -30,8 +28,8 @@ describe GOM::Storage::Remover do
       @remover.perform
     end
 
-    it "should raise an ArugmentError if no mapping for the given object exists" do
-      GOM::Object::Mapping.stub!(:id_by_object).with(@object).and_return(nil)
+    it "should raise an #{ArgumentError} if no mapping for the given object exists" do
+      GOM::Object::Mapping.stub(:id_by_object).with(@object).and_return(nil)
       lambda do
         @remover.perform
       end.should raise_error(ArgumentError)

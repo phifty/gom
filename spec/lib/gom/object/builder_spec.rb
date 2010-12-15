@@ -5,12 +5,8 @@ describe GOM::Object::Builder do
   before :each do
     @related_object_proxy = Object.new
 
-    @object_hash = {
-      :class => "Object",
-      :properties => { :test => "test value" },
-      :relations => { :related_object => @related_object_proxy }
-    }
-    @builder = described_class.new @object_hash
+    @draft = GOM::Object::Draft.new nil, "Object", { :test => "test value" }, { :related_object => @related_object_proxy }
+    @builder = described_class.new @draft
   end
 
   describe "object" do
@@ -37,14 +33,14 @@ describe GOM::Object::Builder do
     end
 
     it "should work without a properties hash" do
-      @object_hash.delete :properties
+      @draft.properties = nil
       lambda do
         @builder.object
       end.should_not raise_error
     end
 
     it "should work without a relations hash" do
-      @object_hash.delete :relations
+      @draft.relations = nil
       lambda do
         @builder.object
       end.should_not raise_error

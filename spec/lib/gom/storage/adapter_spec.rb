@@ -36,7 +36,7 @@ describe GOM::Storage::Adapter do
 
       it "should raise a NotImplementedError" do
         lambda do
-          @adapter.send method_name, *([ nil ] * @adapter.method(method_name).arity)
+          @adapter.send method_name
         end.should raise_error(NotImplementedError)
       end
 
