@@ -6,12 +6,16 @@ describe GOM::Storage::Collection::Fetcher do
     @fetcher = described_class.new
   end
 
-  describe "objects_or_ids" do
+  [ :object_hashes, :ids ].each do |method_name|
 
-    it "should raise a #{NotImplementedError}" do
-      lambda do
-        @fetcher.objects_or_ids
-      end.should raise_error(NotImplementedError)
+    describe "#{method_name}" do
+
+      it "should raise a #{NotImplementedError}" do
+        lambda do
+          @fetcher.send method_name
+        end.should raise_error(NotImplementedError)
+      end
+
     end
 
   end

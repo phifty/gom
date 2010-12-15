@@ -7,12 +7,12 @@ class FakeAdapter < GOM::Storage::Adapter
       @store, @storage_name, @class_name = store, storage_name, class_name
     end
 
-    def objects_or_ids
-      ids = [ ]
+    def object_hashes
+      object_hashes = [ ]
       @store.each do |object_id, object_hash|
-        ids << GOM::Object::Id.new(@storage_name, object_id) if object_hash[:class] == @class_name
+        object_hashes << object_hash if object_hash[:class] == @class_name
       end
-      ids
+      object_hashes
     end
 
   end

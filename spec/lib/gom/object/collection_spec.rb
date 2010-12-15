@@ -4,8 +4,16 @@ describe GOM::Object::Collection do
 
   before :each do
     @object = mock Object
-    @objects = [ @object ]
-    @fetcher = mock GOM::Storage::Collection::Fetcher, :total_count => 1, :objects_or_ids => @objects
+    @object_hash = mock Hash
+    @object_hashes = [ @object_hash ]
+
+    @fetcher = mock GOM::Storage::Collection::Fetcher, :total_count => 1, :object_hashes => @object_hashes, :ids => nil
+
+    @proxy = mock GOM::Object::Proxy
+    GOM::Object::Proxy.stub(:new).and_return(@proxy)
+
+    @builder = mock GOM::Object::CachedBuilder, :object => @object
+    GOM::Object::CachedBuilder.stub(:new).and_return(@builder)
 
     @collection = described_class.new @fetcher
   end
@@ -23,15 +31,75 @@ describe GOM::Object::Collection do
 
     context "with no previous fetched objects" do
 
-      it "should call the fetcher" do
-        @fetcher.should_receive(:objects_or_ids).and_return(@objects)
-        @collection.first
+      context "with a fetcher that provides object hashes" do
+
+        it "should get the object hashes from the fetcher" do
+          @fetcher.should_receive(:object_hashes).and_return(@object_hashes)
+          @collection.first
+        end
+
+        it "should initialize the cached object builder with each object hash" do
+          GOM::Object::CachedBuilder.should_receive(:new).with(@object_hash).and_return(@builder)
+          @collection.first
+        end
+
+        it "should initialize an object proxy with the object" do
+          GOM::Object::Proxy.should_receive(:new).with(@object).and_return(@proxy)
+          @collection.first
+        end
+
+        it "should return a object proxy for the first object" do
+          object_proxy = @collection.first
+          object_proxy.should == @proxy
+        end
+
       end
 
-      it "should return a object proxy for the first object" do
-        object_proxy = @collection.first
-        object_proxy.should be_instance_of(GOM::Object::Proxy)
-        object_proxy.object.should == @object
+      context "with a fetcher that provides ids" do
+
+        before :each do
+          @id = mock GOM::Object::Id
+          @ids = [ @id ]
+
+          @fetcher.stub(:object_hashes).and_return(nil)
+          @fetcher.stub(:ids).and_return(@ids)
+        end
+
+        it "should get the ids from the fetcher" do
+          @fetcher.should_receive(:ids).and_return(@ids)
+          @collection.first
+        end
+
+        it "should not initialize the cached object builder" do
+          GOM::Object::CachedBuilder.should_not_receive(:new)
+          @collection.first
+        end
+
+        it "should initialize an object proxy with the id" do
+          GOM::Object::Proxy.should_receive(:new).with(@id).and_return(@proxy)
+          @collection.first
+        end
+
+        it "should return a object proxy for the first object" do
+          object_proxy = @collection.first
+          object_proxy.should == @proxy
+        end
+
+      end
+
+      context "with a fetcher that doesn't provide object hashes or ids" do
+
+        before :each do
+          @fetcher.stub(:object_hashes).and_return(nil)
+          @fetcher.stub(:ids).and_return(nil)
+        end
+
+        it "should raise a #{NotImplementedError}" do
+          lambda do
+            @collection.first
+          end.should raise_error(NotImplementedError)
+        end
+
       end
 
     end
@@ -49,8 +117,7 @@ describe GOM::Object::Collection do
 
       it "should return a object proxy for the first object" do
         object_proxy = @collection.first
-        object_proxy.should be_instance_of(GOM::Object::Proxy)
-        object_proxy.object.should == @object
+        object_proxy.should == @proxy
       end
 
     end
