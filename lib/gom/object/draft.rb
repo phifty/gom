@@ -11,7 +11,7 @@ module GOM
       attr_writer :properties
       attr_writer :relations
 
-      def initialize(id = nil, class_name = nil, properties = nil, relations = nil)
+      def initialize(id = nil, class_name = nil, properties = { }, relations = { })
         @id, @class_name, @properties, @relations = id, class_name, properties, relations
       end
 
