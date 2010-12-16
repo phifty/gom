@@ -135,6 +135,7 @@ shared_examples_for "an adapter connected to a stateful storage" do
 
     it "should provide a collection of all objects of the class from a class view" do
       collection = GOM::Storage.collection :test_storage, :test_object_class_view
+      collection.size.should > 0
       collection.each do |object_proxy|
         object_proxy.should be_instance_of(GOM::Object::Proxy)
         [
@@ -167,6 +168,7 @@ shared_examples_for "an adapter connected to a stateful storage" do
 
     it "should provide a collection of the object emitted by the map reduce view" do
       collection = GOM::Storage.collection :test_storage, :test_map_reduce_view
+      collection.size.should > 0
       collection.each do |object_proxy|
         object_proxy.should be_instance_of(GOM::Object::Proxy)
         [

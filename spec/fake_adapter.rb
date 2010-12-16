@@ -67,7 +67,7 @@ class FakeAdapter < GOM::Storage::Adapter
       when :test_object_class_view
         GOM::Object::Collection.new ClassCollectionFetcher.new(@store, configuration.name, "Object")
       when :test_map_reduce_view
-        GOM::Object::Collection.new MapReduceCollectionFetcher.new(@store, configuration.name, "number", 11)
+        GOM::Object::Collection.new MapReduceCollectionFetcher.new(@store, configuration.name, :number, 11)
     end
   end
 
