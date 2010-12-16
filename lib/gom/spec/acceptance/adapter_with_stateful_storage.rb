@@ -128,12 +128,12 @@ shared_examples_for "an adapter connected to a stateful storage" do
       GOM::Storage.remove @object
     end
 
-    it "should get a collection from a class view" do
+    it "should provide a collection of the class view" do
       collection = GOM::Storage.collection :test_storage, :test_object_class_view
       collection.should be_instance_of(GOM::Object::Collection)
     end
 
-    it "should get a collection of all objects of the class from a class view" do
+    it "should provide a collection of all objects of the class from a class view" do
       collection = GOM::Storage.collection :test_storage, :test_object_class_view
       collection.each do |object_proxy|
         object_proxy.should be_instance_of(GOM::Object::Proxy)
@@ -143,6 +143,37 @@ shared_examples_for "an adapter connected to a stateful storage" do
         ].should include(object_proxy.object.instance_variable_get(:@number))
         [
           @another_object.instance_variable_get(:@number)
+        ].should_not include(object_proxy.object.instance_variable_get(:@number))
+      end
+    end
+
+  end
+
+  describe "fetching a map reduce collection" do
+
+    before :each do
+      GOM::Storage.store @object, :test_storage
+    end
+
+    after :each do
+      GOM::Storage.remove @related_object
+      GOM::Storage.remove @object
+    end
+
+    it "should provide a collection of the map reduce view" do
+      collection = GOM::Storage.collection :test_storage, :test_map_reduce_view
+      collection.should be_instance_of(GOM::Object::Collection)
+    end
+
+    it "should provide a collection of the object emitted by the map reduce view" do
+      collection = GOM::Storage.collection :test_storage, :test_map_reduce_view
+      collection.each do |object_proxy|
+        object_proxy.should be_instance_of(GOM::Object::Proxy)
+        [
+          @object.instance_variable_get(:@number)
+        ].should include(object_proxy.object.instance_variable_get(:@number))
+        [
+          @related_object.instance_variable_get(:@number)
         ].should_not include(object_proxy.object.instance_variable_get(:@number))
       end
     end

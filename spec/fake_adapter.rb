@@ -17,13 +17,28 @@ class FakeAdapter < GOM::Storage::Adapter
 
   end
 
+  class MapReduceCollectionFetcher
+
+    def initialize(store, storage_name, key, value)
+      @store, @storage_name, @key, @value = store, storage_name, key, value
+    end
+
+    def drafts
+      drafts = [ ]
+      @store.each do |object_id, draft|
+        drafts << draft if draft.properties[@key] == @value
+      end
+      drafts
+    end
+
+  end
+
   def setup
     @store = { }
   end
 
   def fetch(id)
-    result = @store[id]
-    result
+    @store[id]
   end
 
   def store(draft)
@@ -51,6 +66,8 @@ class FakeAdapter < GOM::Storage::Adapter
     case view_name.to_sym
       when :test_object_class_view
         GOM::Object::Collection.new ClassCollectionFetcher.new(@store, configuration.name, "Object")
+      when :test_map_reduce_view
+        GOM::Object::Collection.new MapReduceCollectionFetcher.new(@store, configuration.name, "number", 11)
     end
   end
 
