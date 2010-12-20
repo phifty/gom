@@ -4,7 +4,6 @@ module GOM
   module Storage
 
     autoload :Adapter, File.join(File.dirname(__FILE__), "storage", "adapter")
-    autoload :Collection, File.join(File.dirname(__FILE__), "storage", "collection")
     autoload :Configuration, File.join(File.dirname(__FILE__), "storage", "configuration")
     autoload :Fetcher, File.join(File.dirname(__FILE__), "storage", "fetcher")
     autoload :Remover, File.join(File.dirname(__FILE__), "storage", "remover")
