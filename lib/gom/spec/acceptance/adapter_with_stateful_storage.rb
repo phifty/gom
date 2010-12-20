@@ -150,7 +150,7 @@ shared_examples_for "an adapter connected to a stateful storage" do
 
   end
 
-  describe "fetching a map reduce collection" do
+  describe "fetching a map collection" do
 
     before :each do
       GOM::Storage.store @object, :test_storage
@@ -161,22 +161,17 @@ shared_examples_for "an adapter connected to a stateful storage" do
       GOM::Storage.remove @object
     end
 
-    it "should provide a collection of the map reduce view" do
-      collection = GOM::Storage.collection :test_storage, :test_map_reduce_view
+    it "should provide a collection" do
+      collection = GOM::Storage.collection :test_storage, :test_map_view
       collection.should be_instance_of(GOM::Object::Collection)
     end
 
-    it "should provide a collection of the object emitted by the map reduce view" do
-      collection = GOM::Storage.collection :test_storage, :test_map_reduce_view
+    it "should provide a collection of the objects emitted by the map reduce view" do
+      collection = GOM::Storage.collection :test_storage, :test_map_view
       collection.size.should > 0
       collection.each do |object_proxy|
         object_proxy.should be_instance_of(GOM::Object::Proxy)
-        [
-          @object.instance_variable_get(:@number)
-        ].should include(object_proxy.object.instance_variable_get(:@number))
-        [
-          @related_object.instance_variable_get(:@number)
-        ].should_not include(object_proxy.object.instance_variable_get(:@number))
+        object_proxy.object.instance_variable_get(:@number).should == @object.instance_variable_get(:@number)
       end
     end
 

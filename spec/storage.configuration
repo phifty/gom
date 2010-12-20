@@ -6,7 +6,7 @@ test_storage:
     test_object_class_view:
       type: class
       class: "Object"
-    test_map_reduce_view:
+    test_map_view:
       type: map_reduce
       map:
         function(document) { }
