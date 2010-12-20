@@ -3,7 +3,7 @@
 Gem::Specification.new do |specification|
   specification.name              = "gom"
   specification.version           = "0.2.0"
-  specification.date              = "2010-12-08"
+  specification.date              = "2010-12-20"
 
   specification.authors           = [ "Philipp Brüll" ]
   specification.email             = "b.phifty@gmail.com"
