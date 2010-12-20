@@ -91,7 +91,34 @@ describe GOM::Object::Collection do
 
       end
 
-      context "with a fetcher that doesn't provide drafts or ids" do
+      context "with a fetcher that provide rows" do
+
+        before :each do
+          @row = mock Object
+          @rows = [ @row ]
+
+          @fetcher.stub(:drafts).and_return(nil)
+          @fetcher.stub(:rows).and_return(@rows)
+        end
+
+        it "should get the rows from the fetcher" do
+          @fetcher.should_receive(:rows).and_return(@rows)
+          @collection.first
+        end
+
+        it "should not initialize the cached object builder" do
+          GOM::Object::CachedBuilder.should_not_receive(:new)
+          @collection.first
+        end
+
+        it "should return the first row" do
+          row = @collection.first
+          row.should == @row
+        end
+
+      end
+
+      context "with a fetcher that doesn't provide drafts, ids nor rows" do
 
         it "should raise a #{NotImplementedError}" do
           lambda do
