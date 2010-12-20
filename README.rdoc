@@ -128,6 +128,51 @@ The example defines a class view for all objects of the class <tt>User</tt>. The
 Collections can be handled like (read-only) ruby-arrays and the data will be fetched by the first read access to that
 array.
 
+=== Map/Reduce views
+
+These views are also defined in the storage configuration.
+
+  storage_name:
+    adapter: couchdb
+    views:
+      active_user_count:
+        type: map_reduce
+        map:
+          function(document) {
+            if (document['model_class'] == 'User' && document['active']) {
+              emit(document['_id'], 1);
+            }
+          }
+        reduce:
+          function(keys, values, rereduce) {
+            return sum(values);
+          }
+
+The example defined a map/reduce view that results in a single row with the count of all active users. This row can be
+fetched by...
+
+  rows = GOM::Storage.collection :storage_name, :active_user_count
+  rows.first.value # => 123
+
+If no <tt>reduce</tt> method is given, <tt>GOM</tt> will try to map the fetched data back to ruby-objects. The
+definition would be...
+
+  storage_name:
+    adapter: couchdb
+    views:
+      active_users:
+        type: map_reduce
+        map:
+          function(document) {
+            if (document['model_class'] == 'User') {
+              emit(document['_id'], null);
+            }
+          }
+
+...and the fetch is done by...
+
+  active_users = GOM::Storage.collection :storage_name, :active_users
+
 == Development
 
 Development has been done test-driven and the code follows at most the Clean Code paradigms. Code smells has been
