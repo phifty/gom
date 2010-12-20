@@ -103,6 +103,31 @@ example, the call
 
 will return the instance variable <tt>@name</tt> ("Mr. Storyteller") from the author object.
 
+== Views
+
+Views are a kind of prepared queries to the data store. They are initialized during the setup and provide collections
+of results at runtime. There are several kinds of views.
+
+=== Class views
+
+There views simply provides a collection of all object of a specified class. They are defined at the storage
+configuration.
+
+  storage_name:
+    adapter: filesystem
+    directory: /var/project-name/data
+    views:
+      users:
+        type: class
+        class: User
+
+The example defines a class view for all objects of the class <tt>User</tt>. The result can be fetched via...
+
+  users = GOM::Storage.collection :storage_name, :users
+
+Collections can be handled like (read-only) ruby-arrays and the data will be fetched by the first read access to that
+array.
+
 == Development
 
 Development has been done test-driven and the code follows at most the Clean Code paradigms. Code smells has been
