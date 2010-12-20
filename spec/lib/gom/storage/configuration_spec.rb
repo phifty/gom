@@ -53,7 +53,7 @@ describe GOM::Storage::Configuration do
     end
 
     it "should return a hash including map reduce views" do
-      view = @configuration.views[:test_map_reduce_view]
+      view = @configuration.views[:test_map_view]
       view.should be_instance_of(described_class::View::MapReduce)
       view.map.should == "function(document) { }"
       view.reduce.should == "function(key, values) { }"
