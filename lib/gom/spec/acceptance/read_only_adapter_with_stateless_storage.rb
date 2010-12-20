@@ -47,4 +47,24 @@ shared_examples_for "a read-only adapter connected to a stateless storage" do
 
   end
 
+  describe "fetching a class collection" do
+
+    it "should return a collection" do
+      collection = GOM::Storage.collection :test_storage, :test_object_class_view
+      collection.should be_instance_of(GOM::Object::Collection)
+    end
+
+    it "should return a collection that contains all object of class Object" do
+      collection = GOM::Storage.collection :test_storage, :test_object_class_view
+      collection.size > 0
+      collection.each do |object_proxy|
+        (
+          object_proxy.object.instance_variable_get(:@number) == 5 ||
+          object_proxy.object.instance_variable_get(:@test) == "test value"
+        ).should be_true
+      end
+    end
+
+  end
+
 end

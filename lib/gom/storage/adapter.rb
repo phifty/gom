@@ -6,6 +6,9 @@ module GOM
     # Base class for a storage adapter
     class Adapter
 
+      # If a view could not be found, this error is raised.
+      class ViewNotFoundError < StandardError; end
+
       attr_reader :configuration
 
       def initialize(configuration)
