@@ -179,3 +179,7 @@ Development has been done test-driven and the code follows at most the Clean Cod
 removed by using the reek[http://github.com/kevinrutherford/reek] code smell detector.
 
 This project is still experimental and under development. Any bug report and contribution is welcome!
+
+== Support
+
+Apart from contribution, support via Flattr[http://flattr.com/thing/108957/Generic-Object-Mapper-for-Ruby] is welcome.
