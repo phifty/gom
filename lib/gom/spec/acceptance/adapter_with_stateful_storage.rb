@@ -6,19 +6,19 @@ shared_examples_for "an adapter connected to a stateful storage" do
   end
 
   before :each do
-    @related_object = Object.new
-    @related_object.instance_variable_set :@number, 16
+    @related_object = GOM::Spec::Object.new
+    @related_object.number = 16
 
-    @object = Object.new
-    @object.instance_variable_set :@number, 11
-    @object.instance_variable_set :@related_object, GOM::Object.reference(@related_object)
+    @object = GOM::Spec::Object.new
+    @object.number = 11
+    @object.related_object = GOM::Object.reference @related_object
   end
 
   describe "fetching an object" do
 
     before :each do
       GOM::Storage.store @object, :test_storage
-      @id = GOM::Object.id(@object)
+      @id = GOM::Object.id @object
 
       @object = GOM::Storage.fetch @id
     end
@@ -29,11 +29,11 @@ shared_examples_for "an adapter connected to a stateful storage" do
     end
 
     it "should return an object of the correct class" do
-      @object.class.should == Object
+      @object.class.should == GOM::Spec::Object
     end
 
     it "should set the object's instance variables" do
-      @object.instance_variable_get(:@number).should == 11
+      @object.number.should == 11
     end
 
     it "should assign an object id" do
@@ -41,9 +41,11 @@ shared_examples_for "an adapter connected to a stateful storage" do
     end
 
     it "should also fetch the related object" do
-      related_object_proxy = @object.instance_variable_get :@related_object
+      related_object_proxy = @object.related_object
       related_object_proxy.should be_instance_of(GOM::Object::Proxy)
-      related_object_proxy.object.instance_variable_get(:@number).should == 16
+      # draft = GOM::Storage::Configuration.default.adapter.fetch related_object_proxy.id.object_id
+      # puts "DRAFT ::: " + draft.inspect
+      related_object_proxy.object.number.should == 16
     end
 
   end
@@ -74,7 +76,7 @@ shared_examples_for "an adapter connected to a stateful storage" do
     it "should store the related object" do
       GOM::Storage.store @object, :test_storage
       related_object = GOM::Storage.fetch GOM::Object.id(@related_object)
-      related_object.instance_variable_get(:@number).should == 16
+      related_object.number.should == 16
     end
 
   end
@@ -115,7 +117,7 @@ shared_examples_for "an adapter connected to a stateful storage" do
   describe "fetching a class collection" do
 
     before :each do
-      @another_object = mock Object, :class => mock(Class, :to_s => "Test")
+      @another_object = Object.new
       @another_object.instance_variable_set :@number, 17
 
       GOM::Storage.store @object, :test_storage
@@ -138,13 +140,8 @@ shared_examples_for "an adapter connected to a stateful storage" do
       collection.size.should > 0
       collection.each do |object_proxy|
         object_proxy.should be_instance_of(GOM::Object::Proxy)
-        [
-          @object.instance_variable_get(:@number),
-          @related_object.instance_variable_get(:@number)
-        ].should include(object_proxy.object.instance_variable_get(:@number))
-        [
-          @another_object.instance_variable_get(:@number)
-        ].should_not include(object_proxy.object.instance_variable_get(:@number))
+        [ @object.number, @related_object.number ].should include(object_proxy.number)
+        [ @another_object.instance_variable_get(:@number) ].should_not include(object_proxy.instance_variable_get(:@number))
       end
     end
 
@@ -171,7 +168,7 @@ shared_examples_for "an adapter connected to a stateful storage" do
       collection.size.should > 0
       collection.each do |object_proxy|
         object_proxy.should be_instance_of(GOM::Object::Proxy)
-        object_proxy.object.instance_variable_get(:@number).should == @object.instance_variable_get(:@number)
+        object_proxy.object.number.should == @object.number
       end
     end
 

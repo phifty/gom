@@ -10,7 +10,13 @@ describe GOM::Storage do
   describe "setup" do
 
     before :each do
+      GOM::Object::Mapping.stub(:clear!)
       described_class::Configuration.stub(:setup_all)
+    end
+
+    it "should clear the mapping" do
+      GOM::Object::Mapping.should_receive(:clear!)
+      described_class.setup
     end
 
     it "should setup all storage configurations" do

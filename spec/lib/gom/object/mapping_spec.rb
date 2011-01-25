@@ -60,6 +60,23 @@ describe GOM::Object::Mapping do
 
     end
 
+    describe "size" do
+
+      it "should return the number of mapping entries" do
+        @mapping.size.should == 1
+      end
+
+    end
+
+    describe "clear!" do
+
+      it "should remove all mappings" do
+        @mapping.clear!
+        @mapping.size.should == 0
+      end
+
+    end
+
   end
 
   describe "class method" do
@@ -88,67 +105,20 @@ describe GOM::Object::Mapping do
 
     end
 
-    describe "put" do
+    [ :put, :object_by_id, :id_by_object, :remove_by_id, :remove_by_object, :size ].each do |method_name|
 
-      before :each do
-        GOM::Object::Mapping.stub!(:singleton).and_return(@mapping)
-      end
+      describe "put" do
 
-      it "should call put on the mapping instance" do
-        @mapping.should_receive(:put).with(@object, @id)
-        GOM::Object::Mapping.put @object, @id
-      end
+        before :each do
+          GOM::Object::Mapping.stub(:singleton).and_return(@mapping)
+        end
 
-    end
+        it "should call #{method_name} on the mapping instance" do
+          @mapping.should_receive(method_name).with(:argument).and_return(:result)
+          result = GOM::Object::Mapping.send method_name, :argument
+          result.should == :result
+        end
 
-    describe "object_by_id" do
-
-      before :each do
-        GOM::Object::Mapping.stub!(:singleton).and_return(@mapping)
-      end
-
-      it "should call object_by_id on the mapping instance" do
-        @mapping.should_receive(:object_by_id).with(@id).and_return(@object)
-        GOM::Object::Mapping.object_by_id(@id).should == @object
-      end
-
-    end
-
-    describe "id_by_object" do
-
-      before :each do
-        GOM::Object::Mapping.stub!(:singleton).and_return(@mapping)
-      end
-
-      it "should call id_by_object on the mapping instance" do
-        @mapping.should_receive(:id_by_object).with(@object).and_return(@id)
-        GOM::Object::Mapping.id_by_object(@object).should == @id
-      end
-
-    end
-
-    describe "remove_by_id" do
-
-      before :each do
-        GOM::Object::Mapping.stub!(:singleton).and_return(@mapping)
-      end
-
-      it "should call remove_by_id on the mapping instance" do
-        @mapping.should_receive(:remove_by_id).with(@id)
-        GOM::Object::Mapping.remove_by_id(@id)
-      end
-
-    end
-
-    describe "remove_by_object" do
-
-      before :each do
-        GOM::Object::Mapping.stub!(:singleton).and_return(@mapping)
-      end
-
-      it "should call remove_by_object on the mapping instance" do
-        @mapping.should_receive(:remove_by_object).with(@object)
-        GOM::Object::Mapping.remove_by_object(@object)
       end
 
     end

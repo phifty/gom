@@ -44,8 +44,9 @@ class FakeAdapter < GOM::Storage::Adapter
   def store(draft)
     # store relations
     draft.relations.each do |key, related_object_proxy|
-      GOM::Storage.store related_object_proxy.object, configuration.name
-      id = GOM::Object::Mapping.id_by_object related_object_proxy.object
+      related_object = related_object_proxy.object
+      GOM::Storage.store related_object, configuration.name
+      id = GOM::Object::Mapping.id_by_object related_object
       draft.relations[key] = GOM::Object::Proxy.new id
     end
 
@@ -65,7 +66,7 @@ class FakeAdapter < GOM::Storage::Adapter
   def collection(view_name)
     case view_name.to_sym
       when :test_object_class_view
-        GOM::Object::Collection.new ClassCollectionFetcher.new(@store, configuration.name, "Object")
+        GOM::Object::Collection.new ClassCollectionFetcher.new(@store, configuration.name, "GOM::Spec::Object")
       when :test_map_view
         GOM::Object::Collection.new MapReduceCollectionFetcher.new(@store, configuration.name, :number, 11)
     end

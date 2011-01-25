@@ -3,24 +3,20 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "sp
 describe GOM::Object::Inspector do
 
   before :each do
-    @related_object_proxy = GOM::Object.reference Object.new
+    @related_object_proxy = GOM::Object.reference GOM::Spec::Object.new
 
-    @object = Object.new
-    @object.instance_variable_set :@test, "test value"
-    @object.instance_variable_set :@related_object, @related_object_proxy
+    @object = GOM::Spec::Object.new
+    @object.number = 12
+    @object.related_object = @related_object_proxy
 
     @inspector = GOM::Object::Inspector.new @object
   end
 
   describe "draft" do
 
-    before :each do
-      @draft = GOM::Object::Draft.new nil, "Object", { :test => "test value" }, { :related_object => @related_object_proxy }
-    end
-
     it "should return the correct draft" do
       draft = @inspector.draft
-      draft.should == @draft
+      draft.should == GOM::Object::Draft.new(nil, GOM::Spec::Object.to_s, { :number => 12 }, { :related_object => @related_object_proxy })
     end
 
   end

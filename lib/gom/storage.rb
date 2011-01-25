@@ -13,6 +13,7 @@ module GOM
     class ReadOnlyError < StandardError; end
 
     def self.setup
+      GOM::Object::Mapping.clear!
       Configuration.setup_all
     end
 

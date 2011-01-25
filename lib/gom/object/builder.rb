@@ -23,9 +23,19 @@ module GOM
       private
 
       def initialize_object
-        klass = Object.const_get @draft.class_name
-        arity = [ klass.method(:new).arity, 0 ].max
-        @object = klass.new *([ nil ] * arity)
+        set_class
+        arity = [ @klass.method(:new).arity, 0 ].max
+        @object = @klass.new *([ nil ] * arity)
+      end
+
+      def set_class
+        names = @draft.class_name.split "::"
+        names.shift if names.empty? || names.first.empty?
+
+        @klass = Object
+        names.each do |name|
+          @klass = @klass.const_defined?(name) ? @klass.const_get(name) : @klass.const_missing(name)
+        end
       end
 
       def set_properties
