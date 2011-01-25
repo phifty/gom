@@ -32,7 +32,7 @@ module GOM
         names = @draft.class_name.split "::"
         names.shift if names.empty? || names.first.empty?
 
-        @klass = Object
+        @klass = ::Object
         names.each do |name|
           @klass = @klass.const_defined?(name) ? @klass.const_get(name) : @klass.const_missing(name)
         end
