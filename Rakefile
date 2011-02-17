@@ -35,7 +35,7 @@ end
 
 desc "Run all specs in spec directory"
 RSpec::Core::RakeTask.new do |task|
-  task.pattern = "spec/gom/**/*_spec.rb"
+  task.pattern = "spec/lib/**/*_spec.rb"
 end
 
 namespace :spec do
