@@ -1,29 +1,12 @@
 
-module GOM
+# Contains all parameters for a map reduce view.
+class GOM::Storage::Configuration::View::MapReduce
 
-  module Storage
+  attr_accessor :map
+  attr_accessor :reduce
 
-    # Stores all information to configure a storage.
-    class Configuration
-
-      module View
-
-        # Contains all parameters for a map reduce view.
-        class MapReduce
-
-          attr_accessor :map
-          attr_accessor :reduce
-
-          def initialize(map, reduce)
-            @map, @reduce = map, reduce
-          end
-
-        end
-
-      end
-
-    end
-
+  def initialize(map, reduce)
+    @map, @reduce = map, reduce
   end
 
 end

@@ -4,12 +4,8 @@ require File.join(File.dirname(__FILE__), "spec", "acceptance", "adapter_that_ne
 require File.join(File.dirname(__FILE__), "spec", "acceptance", "adapter_with_stateful_storage")
 require File.join(File.dirname(__FILE__), "spec", "acceptance", "read_only_adapter_with_stateless_storage")
 
-module GOM
+module GOM::Spec
 
-  module Spec
-
-    autoload :Object, File.join(File.dirname(__FILE__), "spec", "object")
-
-  end
+  autoload :Object, File.join(File.dirname(__FILE__), "spec", "object")
 
 end

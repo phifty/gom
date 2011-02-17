@@ -1,16 +1,8 @@
 
-module GOM
+# A dummy test class
+class GOM::Spec::Object
 
-  module Spec
-
-    # A dummy test class
-    class Object
-
-      attr_accessor :number
-      attr_accessor :related_object
-
-    end
-
-  end
+  attr_accessor :number
+  attr_accessor :related_object
 
 end
