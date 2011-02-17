@@ -17,6 +17,10 @@ module GOM
       Configuration.setup_all
     end
 
+    def self.teardown
+      Configuration.teardown_all
+    end
+
     def self.fetch(id_string)
       id = id_string.is_a?(String) ? GOM::Object::Id.new(id_string) : nil
       Fetcher.new(id).object

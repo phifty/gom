@@ -5,6 +5,8 @@ GOM::Storage::Configuration.read File.join(File.dirname(__FILE__), "..", "storag
 
 describe "fake adapter" do
 
-  it_should_behave_like "an adapter connected to a stateful storage"
+  it_should_behave_like "an adapter that needs setup"
+
+  # it_should_behave_like "an adapter connected to a stateful storage"
 
 end

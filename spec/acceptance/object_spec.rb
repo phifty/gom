@@ -10,6 +10,10 @@ describe "object" do
     @object = Object.new
   end
 
+  after :each do
+    GOM::Storage.teardown
+  end
+
   describe "getting it's id" do
 
     before :each do

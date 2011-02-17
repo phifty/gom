@@ -37,11 +37,17 @@ class FakeAdapter < GOM::Storage::Adapter
     @store = { }
   end
 
+  def teardown
+    @store = nil
+  end
+
   def fetch(id)
+    raise GOM::Storage::Adapter::NoSetupError unless @store
     @store[id]
   end
 
   def store(draft)
+    raise GOM::Storage::Adapter::NoSetupError unless @store
     # store relations
     draft.relations.each do |key, related_object_proxy|
       related_object = related_object_proxy.object
@@ -60,10 +66,12 @@ class FakeAdapter < GOM::Storage::Adapter
   end
 
   def remove(id)
+    raise GOM::Storage::Adapter::NoSetupError unless @store
     @store.delete id
   end
 
   def collection(view_name)
+    raise GOM::Storage::Adapter::NoSetupError unless @store
     case view_name.to_sym
       when :test_object_class_view
         GOM::Object::Collection.new ClassCollectionFetcher.new(@store, configuration.name, "GOM::Spec::Object")

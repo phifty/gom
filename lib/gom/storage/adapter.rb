@@ -6,6 +6,9 @@ module GOM
     # Base class for a storage adapter
     class Adapter
 
+      # If the adapter is used without a setup, this error is may raised.
+      class NoSetupError < StandardError; end
+
       # If a view could not be found, this error is raised.
       class ViewNotFoundError < StandardError; end
 
@@ -15,24 +18,12 @@ module GOM
         @configuration = configuration
       end
 
-      def setup(*arguments)
-        not_implemented "setup"
-      end
+      [ :setup, :teardown, :fetch, :store, :remove, :collection ].each do |key|
 
-      def fetch(*arguments)
-        not_implemented "fetch"
-      end
-
-      def store(*arguments)
-        not_implemented "store"
-      end
-
-      def remove(*arguments)
-        not_implemented "remove"
-      end
-
-      def collection(*arguments)
-        not_implemented "collection"
+        define_method key do |*arguments|
+          not_implemented key
+        end
+        
       end
 
       private

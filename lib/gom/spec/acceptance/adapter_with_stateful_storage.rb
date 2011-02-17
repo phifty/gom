@@ -5,6 +5,10 @@ shared_examples_for "an adapter connected to a stateful storage" do
     GOM::Storage.setup
   end
 
+  after :all do
+    GOM::Storage.teardown
+  end
+
   before :each do
     @related_object = GOM::Spec::Object.new
     @related_object.number = 16

@@ -26,6 +26,19 @@ describe GOM::Storage do
 
   end
 
+  describe "teardown" do
+
+    before :each do
+      described_class::Configuration.stub(:teardown_all)
+    end
+
+    it "should teardown all storage configurations" do
+      described_class::Configuration.should_receive(:teardown_all)
+      described_class.teardown
+    end
+
+  end
+
   describe "fetch" do
 
     before :each do

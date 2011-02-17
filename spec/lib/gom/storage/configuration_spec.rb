@@ -20,6 +20,15 @@ describe GOM::Storage::Configuration do
 
   end
 
+  describe "teardown" do
+
+    it "should call teardown on the adapter instance" do
+      @adapter.should_receive(:teardown)
+      @configuration.teardown
+    end
+
+  end
+
   describe "name" do
 
     it "should return the configuration's name" do
@@ -99,6 +108,19 @@ describe GOM::Storage::Configuration do
     it "should call setup on each configuration" do
       @configuration.should_receive(:setup)
       described_class.setup_all
+    end
+
+  end
+
+  describe "teardown_all" do
+
+    before :each do
+      @configuration.stub(:teardown)
+    end
+
+    it "should call teardown on each configuration" do
+      @configuration.should_receive(:teardown)
+      described_class.teardown_all
     end
 
   end

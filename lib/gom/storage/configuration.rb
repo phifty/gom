@@ -21,6 +21,10 @@ module GOM
         adapter.setup
       end
 
+      def teardown
+        adapter.teardown
+      end
+
       def adapter
         @adapter ||= adapter_class.new self
       end
@@ -74,6 +78,12 @@ module GOM
       def self.setup_all
         @configurations.values.each do |configuration|
           configuration.setup
+        end
+      end
+
+      def self.teardown_all
+        @configurations.values.each do |configuration|
+          configuration.teardown
         end
       end
 
