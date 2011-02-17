@@ -24,6 +24,17 @@ Look at the adapter pages to see the adapter-specific configuration values.
 
 == How to use
 
+=== Setup the system
+
+First step after the configuration has been read is to setup the whole storage system. This can be done by
+
+  GOM::Storage.setup
+
+The call should be done during the initialization of your application and triggers each storage adapter to do his own
+setup. To shutdown the system and trigger final clean ups simply call
+
+  GOM::Storage.teardown
+
 === Storing an object
 
 To store an object just pass it to <tt>GOM::Storage.store</tt>.
