@@ -9,6 +9,9 @@ module GOM
     autoload :Remover, File.join(File.dirname(__FILE__), "storage", "remover")
     autoload :Saver, File.join(File.dirname(__FILE__), "storage", "saver")
 
+    # This error can be thrown by the setup method if the given adapter name isn't registered
+    class AdapterNotFoundError < StandardError; end
+
     # This error can be thrown by an adapter if it's doesn't support write operations
     class ReadOnlyError < StandardError; end
 

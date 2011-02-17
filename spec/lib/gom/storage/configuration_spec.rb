@@ -29,10 +29,18 @@ describe GOM::Storage::Configuration do
 
   end
 
-  describe "name" do
+  describe "adapter_class" do
 
-    it "should return the configuration's name" do
-      @configuration.name.should == "test_storage"
+    it "should return the adapter class" do
+      adapter_class = @configuration.adapter_class
+      adapter_class.should == @adapter_class
+    end
+
+    it "should raise a #{GOM::Storage::AdapterNotFoundError} if adapter name is invalid" do
+      GOM::Storage::Adapter.stub(:[]).and_return(nil)
+      lambda do
+        @configuration.adapter_class
+      end.should raise_error(GOM::Storage::AdapterNotFoundError)
     end
 
   end

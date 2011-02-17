@@ -11,6 +11,7 @@ module GOM
       autoload :View, File.join(File.dirname(__FILE__), "configuration", "view")
 
       attr_reader :name
+      attr_reader :hash
 
       def initialize(name, hash)
         @name, @hash = name, { }
@@ -23,6 +24,7 @@ module GOM
 
       def teardown
         adapter.teardown
+        clear_adapter
       end
 
       def adapter
@@ -30,7 +32,7 @@ module GOM
       end
 
       def adapter_class
-        @adapter_class ||= Adapter[@hash[:adapter]]
+        @adapter_class ||= Adapter[@hash[:adapter]] || raise(GOM::Storage::AdapterNotFoundError)
       end
 
       def [](key)
@@ -52,6 +54,10 @@ module GOM
       end
 
       private
+
+      def clear_adapter
+        @adapter, @adapter_class = nil, nil        
+      end
 
       def self.view(hash)
         type = hash["type"]

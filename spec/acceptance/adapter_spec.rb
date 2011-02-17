@@ -1,12 +1,22 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "spec_helper"))
-require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "lib", "gom"))
 
 GOM::Storage::Configuration.read File.join(File.dirname(__FILE__), "..", "storage.configuration")
 
-describe "fake adapter" do
+describe "adapter" do
 
-  it_should_behave_like "an adapter that needs setup"
+  before :each do
+    GOM::Storage.teardown
+  end
 
-  # it_should_behave_like "an adapter connected to a stateful storage"
+  describe "setup" do
+
+    it "should raise a #{GOM::Storage::AdapterNotFoundError} if no adapter of that name is registered" do
+      GOM::Storage::Configuration[:test_storage].hash[:adapter] = "invalid"
+      lambda do
+        GOM::Storage.setup
+      end.should raise_error(GOM::Storage::AdapterNotFoundError)
+    end
+
+  end
 
 end
