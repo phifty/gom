@@ -15,6 +15,18 @@ describe GOM::Object::Mapping do
       @mapping.object_by_id(@id).should == @object
     end
 
+    it "should not store anything if object is nil" do
+      lambda do
+        @mapping.put nil, @id
+      end.should_not change(@mapping, :size)
+    end
+
+    it "should not store anything if id is nil" do
+      lambda do
+        @mapping.put @object, nil
+      end.should_not change(@mapping, :size)
+    end
+
   end
 
   describe "with a mapping" do

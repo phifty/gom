@@ -11,6 +11,7 @@ module GOM
       end
 
       def put(object, id)
+        return if object.nil? || id.nil?
         @map[object] = id
       end
 
