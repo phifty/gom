@@ -1,44 +1,36 @@
 
-module GOM
+# The proxy that fetches an object if it's needed and simply passes method calls to it.
+class GOM::Object::Proxy
 
-  module Object
+  def initialize(object_or_id)
+    @object, @id = object_or_id.is_a?(GOM::Object::Id) ?
+      [ nil, object_or_id ] :
+      [ object_or_id, nil ]
+  end
 
-    # The proxy that fetches an object if it's needed and simply passes method calls to it.
-    class Proxy
+  def object
+    fetch_object unless @object
+    @object
+  end
 
-      def initialize(object_or_id)
-        @object, @id = object_or_id.is_a?(GOM::Object::Id) ?
-          [ nil, object_or_id ] :
-          [ object_or_id, nil ]
-      end
+  def id
+    fetch_id unless @id
+    @id
+  end
 
-      def object
-        fetch_object unless @object
-        @object
-      end
+  def method_missing(method_name, *arguments, &block)
+    fetch_object unless @object
+    @object.send method_name, *arguments, &block
+  end
 
-      def id
-        fetch_id unless @id
-        @id
-      end
+  private
 
-      def method_missing(method_name, *arguments, &block)
-        fetch_object unless @object
-        @object.send method_name, *arguments, &block
-      end
+  def fetch_object
+    @object = GOM::Storage::Fetcher.new(@id).object
+  end
 
-      private
-
-      def fetch_object
-        @object = GOM::Storage::Fetcher.new(@id).object
-      end
-
-      def fetch_id
-        @id = GOM::Object::Mapping.id_by_object @object
-      end
-
-    end
-
+  def fetch_id
+    @id = GOM::Object::Mapping.id_by_object @object
   end
 
 end

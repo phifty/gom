@@ -1,54 +1,46 @@
 
-module GOM
+# Provides a mapping between objects and ids
+class GOM::Object::Mapping
 
-  module Object
+  def initialize
+    @map = { }
+  end
 
-    # Provides a mapping between objects and ids
-    class Mapping
+  def put(object, id)
+    return if object.nil? || id.nil?
+    @map[object] = id
+  end
 
-      def initialize
-        @map = { }
-      end
+  def object_by_id(id)
+    @map.respond_to?(:key) ? @map.key(id) : @map.index(id)
+  end
 
-      def put(object, id)
-        return if object.nil? || id.nil?
-        @map[object] = id
-      end
+  def id_by_object(object)
+    @map[object]
+  end
 
-      def object_by_id(id)
-        @map.respond_to?(:key) ? @map.key(id) : @map.index(id)
-      end
+  def remove_by_id(id)
+    @map.delete object_by_id(id)
+  end
 
-      def id_by_object(object)
-        @map[object]
-      end
+  def remove_by_object(object)
+    @map.delete object
+  end
 
-      def remove_by_id(id)
-        @map.delete object_by_id(id)
-      end
+  def size
+    @map.size
+  end
 
-      def remove_by_object(object)
-        @map.delete object
-      end
+  def clear!
+    @map.clear
+  end
 
-      def size
-        @map.size
-      end
+  def self.singleton
+    @mapping ||= self.new
+  end
 
-      def clear!
-        @map.clear
-      end
-
-      def self.singleton
-        @mapping ||= self.new
-      end
-
-      def self.method_missing(method_name, *arguments, &block)
-        self.singleton.send method_name, *arguments, &block
-      end
-
-    end
-
+  def self.method_missing(method_name, *arguments, &block)
+    self.singleton.send method_name, *arguments, &block
   end
 
 end

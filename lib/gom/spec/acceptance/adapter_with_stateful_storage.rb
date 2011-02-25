@@ -5,6 +5,10 @@ shared_examples_for "an adapter connected to a stateful storage" do
     GOM::Storage.setup
   end
 
+  after :all do
+    GOM::Storage.teardown
+  end
+
   before :each do
     @related_object = GOM::Spec::Object.new
     @related_object.number = 16
@@ -43,8 +47,6 @@ shared_examples_for "an adapter connected to a stateful storage" do
     it "should also fetch the related object" do
       related_object_proxy = @object.related_object
       related_object_proxy.should be_instance_of(GOM::Object::Proxy)
-      # draft = GOM::Storage::Configuration.default.adapter.fetch related_object_proxy.id.object_id
-      # puts "DRAFT ::: " + draft.inspect
       related_object_proxy.object.number.should == 16
     end
 
@@ -118,7 +120,6 @@ shared_examples_for "an adapter connected to a stateful storage" do
 
     before :each do
       @another_object = Object.new
-      @another_object.instance_variable_set :@number, 17
 
       GOM::Storage.store @object, :test_storage
       GOM::Storage.store @another_object, :test_storage
@@ -140,8 +141,7 @@ shared_examples_for "an adapter connected to a stateful storage" do
       collection.size.should > 0
       collection.each do |object_proxy|
         object_proxy.should be_instance_of(GOM::Object::Proxy)
-        [ @object.number, @related_object.number ].should include(object_proxy.number)
-        [ @another_object.instance_variable_get(:@number) ].should_not include(object_proxy.instance_variable_get(:@number))
+        object_proxy.object.should be_instance_of(GOM::Spec::Object)
       end
     end
 
@@ -168,6 +168,7 @@ shared_examples_for "an adapter connected to a stateful storage" do
       collection.size.should > 0
       collection.each do |object_proxy|
         object_proxy.should be_instance_of(GOM::Object::Proxy)
+        object_proxy.object.should be_instance_of(GOM::Spec::Object)
         object_proxy.object.number.should == @object.number
       end
     end

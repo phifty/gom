@@ -1,5 +1,4 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..", "spec_helper"))
-require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "lib", "gom"))
 
 GOM::Storage::Configuration.read File.join(File.dirname(__FILE__), "..", "storage.configuration")
 
@@ -8,6 +7,10 @@ describe "object" do
   before :each do
     GOM::Storage.setup
     @object = Object.new
+  end
+
+  after :each do
+    GOM::Storage.teardown
   end
 
   describe "getting it's id" do

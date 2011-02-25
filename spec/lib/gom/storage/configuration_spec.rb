@@ -20,10 +20,27 @@ describe GOM::Storage::Configuration do
 
   end
 
-  describe "name" do
+  describe "teardown" do
 
-    it "should return the configuration's name" do
-      @configuration.name.should == "test_storage"
+    it "should call teardown on the adapter instance" do
+      @adapter.should_receive(:teardown)
+      @configuration.teardown
+    end
+
+  end
+
+  describe "adapter_class" do
+
+    it "should return the adapter class" do
+      adapter_class = @configuration.adapter_class
+      adapter_class.should == @adapter_class
+    end
+
+    it "should raise a #{GOM::Storage::AdapterNotFoundError} if adapter name is invalid" do
+      GOM::Storage::Adapter.stub(:[]).and_return(nil)
+      lambda do
+        @configuration.adapter_class
+      end.should raise_error(GOM::Storage::AdapterNotFoundError)
     end
 
   end
@@ -99,6 +116,19 @@ describe GOM::Storage::Configuration do
     it "should call setup on each configuration" do
       @configuration.should_receive(:setup)
       described_class.setup_all
+    end
+
+  end
+
+  describe "teardown_all" do
+
+    before :each do
+      @configuration.stub(:teardown)
+    end
+
+    it "should call teardown on each configuration" do
+      @configuration.should_receive(:teardown)
+      described_class.teardown_all
     end
 
   end

@@ -30,7 +30,7 @@ describe GOM::Storage::Adapter do
 
   end
 
-  [ :setup, :fetch, :store, :remove, :collection ].each do |method_name|
+  [ :setup, :teardown, :fetch, :store, :remove, :collection ].each do |method_name|
 
     describe "#{method_name}" do
 
