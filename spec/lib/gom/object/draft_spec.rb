@@ -8,8 +8,8 @@ describe GOM::Object::Draft do
 
   describe "initialize" do
 
-    it "should set the id" do
-      @draft.id.should == "object_1"
+    it "should set the object id" do
+      @draft.object_id.should == "object_1"
     end
 
     it "should set the class name" do

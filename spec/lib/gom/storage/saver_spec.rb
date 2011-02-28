@@ -4,9 +4,11 @@ describe GOM::Storage::Saver do
 
   before :each do
     @id = GOM::Object::Id.new "test_storage", "object_1"
+
     @object = Object.new
     @object.instance_variable_set :@test, "test value"
     @object.freeze
+
     @draft = GOM::Object::Draft.new "object_1", "Object", { :test => "test value" }
 
     GOM::Object::Mapping.stub(:id_by_object).with(@object).and_return(@id)
@@ -54,7 +56,7 @@ describe GOM::Storage::Saver do
 
     it "should store the object without an id if no mapping exists" do
       GOM::Object::Mapping.stub(:id_by_object).with(@object).and_return(nil)
-      @draft.id = nil
+      @draft.object_id = nil
 
       @adapter.should_receive(:store).with(@draft).and_return("object_1")
       @saver.perform

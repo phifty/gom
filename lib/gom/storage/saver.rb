@@ -30,7 +30,7 @@ class GOM::Storage::Saver
 
   def inspect_object
     @draft = GOM::Object::Inspector.new(@object).draft
-    @draft.id = @id.object_id if @id
+    @draft.object_id = @id.object_id if @id
   end
 
   def store_draft

@@ -21,7 +21,7 @@ class GOM::Object::CachedBuilder
   private
 
   def initialize_id
-    @id = GOM::Object::Id.new @storage_name, @draft.id
+    @id = GOM::Object::Id.new @storage_name, @draft.object_id
   end
 
   def check_mapping

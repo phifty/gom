@@ -57,12 +57,12 @@ class FakeAdapter < GOM::Storage::Adapter
     end
 
     # may generate an id
-    draft.id ||= next_id
+    draft.object_id ||= next_id
 
     # store the draft
-    @store[draft.id] = draft
+    @store[draft.object_id] = draft
 
-    draft.id
+    draft.object_id
   end
 
   def remove(id)

@@ -4,7 +4,7 @@ describe GOM::Object::CachedBuilder do
 
   before :each do
     @object_id = "object_1"
-    @draft = mock GOM::Object::Draft, :id => @object_id
+    @draft = GOM::Object::Draft.new @object_id
 
     @id = mock GOM::Object::Id
     GOM::Object::Id.stub(:new).and_return(@id)

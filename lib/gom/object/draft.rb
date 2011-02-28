@@ -2,13 +2,13 @@
 # A draft for an object
 class GOM::Object::Draft
 
-  attr_accessor :id
+  attr_accessor :object_id
   attr_accessor :class_name
   attr_writer :properties
   attr_writer :relations
 
-  def initialize(id = nil, class_name = nil, properties = { }, relations = { })
-    @id, @class_name, @properties, @relations = id, class_name, properties, relations
+  def initialize(object_id = nil, class_name = nil, properties = { }, relations = { })
+    @object_id, @class_name, @properties, @relations = object_id, class_name, properties, relations
   end
 
   def properties
@@ -20,7 +20,7 @@ class GOM::Object::Draft
   end
 
   def ==(other)
-    id == other.id && class_name == other.class_name && properties == other.properties && relations == other.relations
+    object_id == other.object_id && class_name == other.class_name && properties == other.properties && relations == other.relations
   end
 
 end
