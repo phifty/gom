@@ -13,7 +13,7 @@ describe GOM::Object::Collection do
     @builder = mock GOM::Object::CachedBuilder, :object => @object
     GOM::Object::CachedBuilder.stub(:new).and_return(@builder)
 
-    @collection = described_class.new @fetcher
+    @collection = described_class.new @fetcher, "test_storage"
   end
 
   describe "total_count" do
@@ -44,7 +44,7 @@ describe GOM::Object::Collection do
         end
 
         it "should initialize the cached object builder with each draft" do
-          GOM::Object::CachedBuilder.should_receive(:new).with(@draft).and_return(@builder)
+          GOM::Object::CachedBuilder.should_receive(:new).with(@draft, "test_storage").and_return(@builder)
           @collection.first
         end
 

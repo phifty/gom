@@ -2,8 +2,8 @@
 # A class for a collection of objects.
 class GOM::Object::Collection
 
-  def initialize(fetcher)
-    @fetcher = fetcher
+  def initialize(fetcher, storage_name)
+    @fetcher, @storage_name = fetcher, storage_name
   end
 
   def total_count
@@ -39,7 +39,7 @@ class GOM::Object::Collection
 
   def load_object_proxies_from_drafts
     @object_proxies = @fetcher.drafts.map do |draft|
-      GOM::Object::Proxy.new GOM::Object::CachedBuilder.new(draft).object
+      GOM::Object::Proxy.new GOM::Object::CachedBuilder.new(draft, @storage_name).object
     end
   end
 

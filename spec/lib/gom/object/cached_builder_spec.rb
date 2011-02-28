@@ -3,8 +3,11 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "sp
 describe GOM::Object::CachedBuilder do
 
   before :each do
-    @draft = mock GOM::Object::Draft
+    @object_id = "object_1"
+    @draft = mock GOM::Object::Draft, :id => @object_id
+
     @id = mock GOM::Object::Id
+    GOM::Object::Id.stub(:new).and_return(@id)
 
     @object = mock Object
     GOM::Object::Mapping.stub(:object_by_id).and_return(@object)
@@ -13,10 +16,15 @@ describe GOM::Object::CachedBuilder do
     @builder = mock GOM::Object::Builder, :object => @object
     GOM::Object::Builder.stub(:new).and_return(@builder)
 
-    @cached_builder = described_class.new @draft, @id
+    @cached_builder = described_class.new @draft, "test_storage"
   end
 
   describe "object" do
+
+    it "should initialize the right id" do
+      GOM::Object::Id.should_receive(:new).with("test_storage", "object_1").and_return(@id)
+      @cached_builder.object
+    end
 
     it "should check the mapping for the object" do
       GOM::Object::Mapping.should_receive(:object_by_id).with(@id).and_return(@object)

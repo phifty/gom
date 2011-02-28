@@ -1,5 +1,5 @@
 
-# Fetches an object from the storage.
+# Fetches a draft from the storage adapter and uses the cached builder to build an object from it.
 class GOM::Storage::Fetcher
 
   attr_accessor :id
@@ -10,7 +10,7 @@ class GOM::Storage::Fetcher
 
   def object
     fetch_draft
-    return unless has_draft?
+    return nil unless has_draft?
     build_object
     @object
   end
@@ -26,7 +26,7 @@ class GOM::Storage::Fetcher
   end
 
   def build_object
-    @object = GOM::Object::CachedBuilder.new(@draft, @id).object
+    @object = GOM::Object::CachedBuilder.new(@draft, @id.storage_name).object
   end
 
   def adapter

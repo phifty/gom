@@ -57,12 +57,12 @@ class FakeAdapter < GOM::Storage::Adapter
     end
 
     # may generate an id
-    object_id = draft.id || next_id
+    draft.id ||= next_id
 
     # store the draft
-    @store[object_id] = draft
+    @store[draft.id] = draft
 
-    object_id
+    draft.id
   end
 
   def remove(id)
@@ -74,9 +74,9 @@ class FakeAdapter < GOM::Storage::Adapter
     raise GOM::Storage::Adapter::NoSetupError unless @store
     case view_name.to_sym
       when :test_object_class_view
-        GOM::Object::Collection.new ClassCollectionFetcher.new(@store, configuration.name, "GOM::Spec::Object")
+        GOM::Object::Collection.new ClassCollectionFetcher.new(@store, configuration.name, "GOM::Spec::Object"), configuration.name
       when :test_map_view
-        GOM::Object::Collection.new MapReduceCollectionFetcher.new(@store, configuration.name, :number, 11)
+        GOM::Object::Collection.new MapReduceCollectionFetcher.new(@store, configuration.name, :number, 11), configuration.name
     end
   end
 

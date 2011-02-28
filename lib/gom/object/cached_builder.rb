@@ -4,13 +4,14 @@
 class GOM::Object::CachedBuilder
 
   attr_accessor :draft
-  attr_accessor :id
+  attr_accessor :storage_name
 
-  def initialize(draft, id = nil)
-    @draft, @id = draft, id
+  def initialize(draft, storage_name)
+    @draft, @storage_name = draft, storage_name
   end
 
   def object
+    initialize_id
     check_mapping
     build_object
     set_mapping
@@ -18,6 +19,10 @@ class GOM::Object::CachedBuilder
   end
 
   private
+
+  def initialize_id
+    @id = GOM::Object::Id.new @storage_name, @draft.id
+  end
 
   def check_mapping
     @object = GOM::Object::Mapping.object_by_id @id
