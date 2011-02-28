@@ -35,6 +35,12 @@ class GOM::Object::Mapping
     @map.clear
   end
 
+  def inspect
+    output = ""
+    @map.each{ |object, id| output += object.inspect + " => " + id.to_s + "\n" }
+    output
+  end
+
   def self.singleton
     @mapping ||= self.new
   end

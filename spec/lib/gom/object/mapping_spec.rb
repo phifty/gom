@@ -89,6 +89,15 @@ describe GOM::Object::Mapping do
 
     end
 
+    describe "inspect" do
+
+      it "should return a string with all the mappings" do
+        output = @mapping.inspect
+        output.should =~ /#<Object:.*> => test_storage:object_1\n/
+      end
+
+    end
+
   end
 
   describe "class method" do
