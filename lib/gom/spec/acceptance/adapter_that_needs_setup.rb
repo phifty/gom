@@ -35,6 +35,16 @@ shared_examples_for "an adapter that needs setup" do
 
   end
 
+  describe "counting the objects" do
+
+    it "should raise a #{GOM::Storage::Adapter::NoSetupError}" do
+      lambda do
+        GOM::Storage.count :test_storage
+      end.should raise_error(GOM::Storage::Adapter::NoSetupError)
+    end
+
+  end
+
   describe "fetching a class collection" do
 
     it "should raise a #{GOM::Storage::Adapter::NoSetupError}" do

@@ -70,6 +70,11 @@ class FakeAdapter < GOM::Storage::Adapter
     @store.delete id
   end
 
+  def count
+    raise GOM::Storage::Adapter::NoSetupError unless @store
+    @store.size
+  end
+
   def collection(view_name)
     raise GOM::Storage::Adapter::NoSetupError unless @store
     case view_name.to_sym

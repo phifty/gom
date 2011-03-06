@@ -70,6 +70,13 @@ shared_examples_for "an adapter connected to a stateful storage" do
       object.should == @object
     end
 
+    it "should change the object count by 2" do
+      counter = Proc.new { GOM::Storage.count :test_storage }
+      lambda do
+        GOM::Storage.store @object, :test_storage
+      end.should change(counter, :call).by(2)
+    end
+
     it "should use default storage if nothing specified" do
       GOM::Storage.store @object
       GOM::Object.id(@object).should =~ /^test_storage:/
@@ -84,6 +91,14 @@ shared_examples_for "an adapter connected to a stateful storage" do
       GOM::Storage.store @object, :test_storage
       related_object = GOM::Storage.fetch GOM::Object.id(@related_object)
       related_object.number.should == 16
+    end
+
+    it "should not change the object count if performing an update" do
+      GOM::Storage.store @object, :test_storage
+      counter = Proc.new { GOM::Storage.count :test_storage }
+      lambda do
+        GOM::Storage.store @object, :test_storage
+      end.should_not change(counter, :call)
     end
 
   end
@@ -112,6 +127,13 @@ shared_examples_for "an adapter connected to a stateful storage" do
     it "should remove the object's id" do
       GOM::Storage.remove @object
       GOM::Object.id(@object).should be_nil
+    end
+
+    it "should change the object count by -1" do
+      counter = Proc.new { GOM::Storage.count :test_storage }
+      lambda do
+        GOM::Storage.remove @object
+      end.should change(counter, :call).by(-1)
     end
 
     it "should not remove the related object" do

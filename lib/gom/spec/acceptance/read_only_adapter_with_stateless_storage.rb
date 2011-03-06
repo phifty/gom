@@ -57,6 +57,15 @@ shared_examples_for "a read-only adapter connected to a stateless storage" do
 
   end
 
+  describe "counting the objects" do
+
+    it "should return a number" do
+      count = GOM::Storage.count :test_storage
+      count.should be_instance_of(Fixnum)
+    end
+
+  end
+
   describe "fetching a class collection" do
 
     it "should return a collection" do

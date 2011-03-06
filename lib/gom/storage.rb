@@ -3,6 +3,7 @@ module GOM::Storage
 
   autoload :Adapter, File.join(File.dirname(__FILE__), "storage", "adapter")
   autoload :Configuration, File.join(File.dirname(__FILE__), "storage", "configuration")
+  autoload :Counter, File.join(File.dirname(__FILE__), "storage", "counter")
   autoload :Fetcher, File.join(File.dirname(__FILE__), "storage", "fetcher")
   autoload :Remover, File.join(File.dirname(__FILE__), "storage", "remover")
   autoload :Saver, File.join(File.dirname(__FILE__), "storage", "saver")
@@ -34,6 +35,10 @@ module GOM::Storage
   def self.remove(object_or_id)
     object_or_id = GOM::Object::Id.new object_or_id if object_or_id.is_a?(String)
     Remover.new(object_or_id).perform
+  end
+
+  def self.count(storage_name)
+    Counter.new(storage_name).perform
   end
 
   def self.collection(storage_name, *arguments)

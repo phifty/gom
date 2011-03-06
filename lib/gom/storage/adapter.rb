@@ -14,7 +14,7 @@ class GOM::Storage::Adapter
     @configuration = configuration
   end
 
-  [ :setup, :teardown, :fetch, :store, :remove, :collection ].each do |key|
+  [ :setup, :teardown, :fetch, :store, :remove, :count, :collection ].each do |key|
 
     define_method key do |*arguments|
       not_implemented key

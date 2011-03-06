@@ -120,6 +120,25 @@ describe GOM::Storage do
 
   end
 
+  describe "count" do
+
+    before :each do
+      @counter = mock described_class::Counter, :perform => 1
+      described_class::Counter.stub(:new).and_return(@counter)
+    end
+
+    it "should initialize the counter" do
+      described_class::Counter.should_receive(:new).with("test_storage").and_return(@counter)
+      described_class.count "test_storage"
+    end
+
+    it "should return the count" do
+      count = described_class.count "test_storage"
+      count.should == 1
+    end
+
+  end
+
   describe "collection" do
 
     before :each do
