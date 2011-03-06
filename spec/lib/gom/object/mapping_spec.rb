@@ -32,7 +32,7 @@ describe GOM::Object::Mapping do
   describe "with a mapping" do
 
     before :each do
-      @same_id = GOM::Object::Id.new "test_storage", "object_1"
+      @same_id = GOM::Object::Id.new @id.storage_name, @id.object_id
       @mapping.put @object, @id
     end
 
@@ -40,6 +40,9 @@ describe GOM::Object::Mapping do
 
       it "should return the object to the given id" do
         @mapping.object_by_id(@id).should == @object
+      end
+
+      it "should return the object for a different id with the same attributes" do
         @mapping.object_by_id(@same_id).should == @object
       end
 

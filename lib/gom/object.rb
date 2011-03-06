@@ -15,6 +15,11 @@ module GOM::Object
     id ? id.to_s : nil
   end
 
+  def self.storage_name(object)
+    id = Mapping.id_by_object object
+    id ? id.storage_name : nil
+  end
+
   def self.reference(object)
     Proxy.new object
   end

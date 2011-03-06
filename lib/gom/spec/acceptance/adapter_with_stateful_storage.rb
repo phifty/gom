@@ -50,6 +50,11 @@ shared_examples_for "an adapter connected to a stateful storage" do
       related_object_proxy.object.number.should == 16
     end
 
+    it "should return exactly the same object if the id is fetched again" do
+      object = GOM::Storage.fetch @id
+      object.should === @object
+    end
+
   end
 
   describe "storing an object" do

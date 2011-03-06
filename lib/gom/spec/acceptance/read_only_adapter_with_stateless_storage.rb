@@ -7,7 +7,7 @@ shared_examples_for "a read-only adapter connected to a stateless storage" do
 
   after :all do
     GOM::Storage.teardown
-  end  
+  end
 
   describe "fetching an object" do
 
@@ -16,6 +16,12 @@ shared_examples_for "a read-only adapter connected to a stateless storage" do
       object.should be_instance_of(GOM::Spec::Object)
       object.number.should == 5
       GOM::Object.id(object).should == "test_storage:object_1"
+    end
+
+    it "should return the exactly the same object if fetched again" do
+      object_one = GOM::Storage.fetch "test_storage:object_1"
+      object_two = GOM::Storage.fetch "test_storage:object_1"
+      object_one.should === object_two
     end
 
     it "should return proxy objects that fetches the related objects" do
