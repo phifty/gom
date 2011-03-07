@@ -15,15 +15,15 @@ class GOM::Object::Collection
   end
 
   def method_missing(method_name, *arguments, &block)
-    load unless (@object_proxies || @rows)
-    (@object_proxies || @rows).send method_name, *arguments, &block
+    load unless (@objects || @object_proxies || @rows)
+    (@objects || @object_proxies || @rows).send method_name, *arguments, &block
   end
 
   private
 
   def load
     if fetcher_has_drafts?
-      load_object_proxies_from_drafts
+      load_objects_from_drafts
     elsif fetcher_has_ids?
       load_object_proxies_from_ids
     elsif fetcher_has_rows?
@@ -37,9 +37,9 @@ class GOM::Object::Collection
     @fetcher.respond_to?(:drafts) && @fetcher.drafts
   end
 
-  def load_object_proxies_from_drafts
-    @object_proxies = @fetcher.drafts.map do |draft|
-      GOM::Object::Proxy.new GOM::Object::CachedBuilder.new(draft, @storage_name).object
+  def load_objects_from_drafts
+    @objects = @fetcher.drafts.map do |draft|
+      GOM::Object::CachedBuilder.new(draft, @storage_name).object
     end
   end
 

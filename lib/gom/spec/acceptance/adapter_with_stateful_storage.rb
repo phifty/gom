@@ -165,11 +165,7 @@ shared_examples_for "an adapter connected to a stateful storage" do
 
     it "should provide a collection of all objects of the class from a class view" do
       collection = GOM::Storage.collection :test_storage, :test_object_class_view
-      collection.size.should > 0
-      collection.each do |object_proxy|
-        object_proxy.should be_instance_of(GOM::Object::Proxy)
-        object_proxy.object.should be_instance_of(GOM::Spec::Object)
-      end
+      collection.map(&:class).uniq.should == [ GOM::Spec::Object ]
     end
 
   end
@@ -192,12 +188,7 @@ shared_examples_for "an adapter connected to a stateful storage" do
 
     it "should provide a collection of the objects emitted by the map reduce view" do
       collection = GOM::Storage.collection :test_storage, :test_map_view
-      collection.size.should > 0
-      collection.each do |object_proxy|
-        object_proxy.should be_instance_of(GOM::Object::Proxy)
-        object_proxy.object.should be_instance_of(GOM::Spec::Object)
-        object_proxy.object.number.should == @object.number
-      end
+      collection.map(&:number).uniq.should == [ 11 ]
     end
 
   end

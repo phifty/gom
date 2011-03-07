@@ -48,14 +48,9 @@ describe GOM::Object::Collection do
           @collection.first
         end
 
-        it "should initialize an object proxy with the object" do
-          GOM::Object::Proxy.should_receive(:new).with(@object).and_return(@proxy)
-          @collection.first
-        end
-
-        it "should return a object proxy for the first object" do
-          object_proxy = @collection.first
-          object_proxy.should == @proxy
+        it "should return the first object" do
+          object = @collection.first
+          object.should == @object
         end
 
       end
@@ -147,8 +142,8 @@ describe GOM::Object::Collection do
       end
 
       it "should return a object proxy for the first object" do
-        object_proxy = @collection.first
-        object_proxy.should == @proxy
+        object = @collection.first
+        object.should == @object
       end
 
     end
