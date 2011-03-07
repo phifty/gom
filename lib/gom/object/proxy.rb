@@ -15,12 +15,12 @@ class GOM::Object::Proxy
 
   def id
     fetch_id unless @id
-    @id ? @id.to_s : nil
+    @id && @id.to_s
   end
 
   def storage_name
     fetch_id unless @id
-    @id ? @id.storage_name : nil
+    @id && @id.storage_name
   end
 
   def method_missing(method_name, *arguments, &block)

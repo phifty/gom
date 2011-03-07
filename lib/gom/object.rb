@@ -21,7 +21,7 @@ module GOM::Object
   end
 
   def self.reference(object)
-    Proxy.new object
+    object.is_a?(GOM::Object::Proxy) ? object : Proxy.new(object)
   end
 
 end
