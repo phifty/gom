@@ -2,11 +2,14 @@ require File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "sp
 
 describe GOM::Object::Proxy do
 
+  before :each do
+    @id = GOM::Object::Id.new "test_storage", "object_1"
+    @object = mock Object, :test_method => nil
+  end
+
   describe "initialized with an object" do
 
     before :each do
-      @object = mock Object, :test_method => nil
-
       @proxy = GOM::Object::Proxy.new @object
     end
 
@@ -26,7 +29,6 @@ describe GOM::Object::Proxy do
     describe "id" do
 
       before :each do
-        @id = mock GOM::Object::Id
         GOM::Object::Mapping.stub(:id_by_object).and_return(@id)
       end
 
@@ -36,12 +38,38 @@ describe GOM::Object::Proxy do
       end
 
       it "should return the fetched id" do
-        @proxy.id.should == @id
+        id = @proxy.id
+        id.should == "test_storage:object_1"
       end
 
       it "should return nil if no mapping exists" do
         GOM::Object::Mapping.stub(:id_by_object).and_return(nil)
-        @proxy.id.should be_nil
+        id = @proxy.id
+        id.should be_nil
+      end
+
+    end
+
+    describe "storage_name" do
+
+      before :each do
+        GOM::Object::Mapping.stub(:id_by_object).and_return(@id)
+      end
+
+      it "should fetch the id from the mapping" do
+        GOM::Object::Mapping.should_receive(:id_by_object).with(@object).and_return(@id)
+        @proxy.storage_name
+      end
+
+      it "should return the fetched storage name" do
+        storage_name = @proxy.storage_name
+        storage_name.should == "test_storage"
+      end
+
+      it "should return nil if no mapping exists" do
+        GOM::Object::Mapping.stub(:id_by_object).and_return(nil)
+        storage_name = @proxy.storage_name
+        storage_name.should be_nil
       end
 
     end
@@ -51,10 +79,6 @@ describe GOM::Object::Proxy do
   describe "initialized with an id" do
 
     before :each do
-      @id = GOM::Object::Id.new "test_storage", "object_1"
-
-      @object = mock Object, :test_method => nil
-
       @fetcher = mock GOM::Storage::Fetcher, :object => @object
       GOM::Storage::Fetcher.stub(:new).and_return(@fetcher)
 
@@ -81,7 +105,17 @@ describe GOM::Object::Proxy do
     describe "id" do
 
       it "should return the id" do
-        @proxy.id.should == @id
+        id = @proxy.id
+        id.should == "test_storage:object_1"
+      end
+
+    end
+
+    describe "storage_name" do
+
+      it "should return the storage name" do
+        storage_name = @proxy.storage_name
+        storage_name.should == "test_storage"
       end
 
     end
