@@ -10,15 +10,14 @@ is plugged-in via an adapter interface. Currently, the following adapters are pr
 
 == Configuration
 
-At the beginning of your program the configuration should be read with the following command.
+At the beginning of your program the storage configuration should be done with the <tt>GOM::Storage.configure</tt>
+command.
 
-  GOM::Storage::Configuration.read filename
-
-The configuration file should be written in the YML format and look like...
-
-  storage_name:
-    adapter: filesystem
-    directory: /var/project-name/data
+  GOM::Storage.configure {
+    name :storage_name
+    adapter :filesystem
+    directory "/var/project-name/data"
+  }
 
 Look at the adapter pages to see the adapter-specific configuration values.
 
@@ -124,13 +123,16 @@ of results at runtime. There are several kinds of views.
 There views simply provides a collection of all object of a specified class. They are defined at the storage
 configuration.
 
-  storage_name:
-    adapter: filesystem
-    directory: /var/project-name/data
-    views:
-      users:
-        type: class
-        class: User
+  GOM::Storage.configure {
+    name :storage_name
+    adapter :filesystem
+    directory "/var/project-name/data"
+    view {
+      name :users
+      type :class
+      model_class User
+    }
+  }
 
 The example defines a class view for all objects of the class <tt>User</tt>. The result can be fetched via...
 
@@ -143,21 +145,26 @@ array.
 
 These views are also defined in the storage configuration.
 
-  storage_name:
-    adapter: couchdb
-    views:
-      active_user_count:
-        type: map_reduce
-        map:
-          function(document) {
-            if (document['model_class'] == 'User' && document['active']) {
-              emit(document['_id'], 1);
-            }
+  GOM::Storage.configure {
+    name :storage_name
+    adapter :couchdb
+    view {
+      name :active_user_count
+      type :map_reduce
+      map_function """
+        function(document) {
+          if (document['model_class'] == 'User' && document['active']) {
+            emit(document['_id'], 1);
           }
-        reduce:
-          function(keys, values, rereduce) {
-            return sum(values);
-          }
+        }
+      """
+      reduce_function """
+        function(keys, values, rereduce) {
+          return sum(values);
+        }
+      """
+    }
+  }
 
 The example defined a map/reduce view that results in a single row with the count of all active users. This row can be
 fetched by...
@@ -168,17 +175,21 @@ fetched by...
 If no <tt>reduce</tt> method is given, <tt>GOM</tt> will try to map the fetched data back to ruby-objects. The
 definition would be...
 
-  storage_name:
-    adapter: couchdb
-    views:
-      active_users:
-        type: map_reduce
-        map:
-          function(document) {
-            if (document['model_class'] == 'User') {
-              emit(document['_id'], null);
-            }
+  GOM::Storage.configure {
+    name :storage_name
+    adapter :couchdb
+    view {
+      name :active_users
+      type :map_reduce
+      map_function """
+        function(document) {
+          if (document['model_class'] == 'User') {
+            emit(document['_id'], null);
           }
+        }
+      """
+    }
+  }
 
 ...and the fetch is done by...
 
