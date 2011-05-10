@@ -5,13 +5,29 @@ describe GOM::Storage::Configuration do
   before :each do
     @adapter = mock GOM::Storage::Adapter, :setup => nil
     @adapter_class = mock Class, :new => @adapter
-    GOM::Storage::Adapter.stub(:[]).and_return(@adapter_class)
+    GOM::Storage::Adapter.stub :[] => @adapter_class
 
-    described_class.read File.expand_path(File.join(File.dirname(__FILE__), "..", "..", "..", "storage.configuration"))
+    described_class.configure {
+      storage {
+        name :test_storage
+        adapter :test
+        view {
+          name :test_object_class_view
+          type :class
+          model_class Object
+        }
+        view {
+          name :test_map_view
+          type :map_reduce
+          map_function "function(document) { }"
+          reduce_function "function(key, values) { }"
+        }
+      }
+    }
     @configuration = described_class[:test_storage]
   end
 
-  describe "setup" do
+  describe "#setup" do
 
     it "should call setup on the adapter instance" do
       @adapter.should_receive(:setup)
@@ -20,7 +36,7 @@ describe GOM::Storage::Configuration do
 
   end
 
-  describe "teardown" do
+  describe "#teardown" do
 
     it "should call teardown on the adapter instance" do
       @adapter.should_receive(:teardown)
@@ -29,7 +45,12 @@ describe GOM::Storage::Configuration do
 
   end
 
-  describe "adapter_class" do
+  describe "#adapter_class" do
+
+    it "should fetch the right adapter class" do
+      GOM::Storage::Adapter.should_receive(:[]).with(:test).and_return(@adapter_class)
+      @configuration.adapter_class
+    end
 
     it "should return the adapter class" do
       adapter_class = @configuration.adapter_class
@@ -45,28 +66,43 @@ describe GOM::Storage::Configuration do
 
   end
 
-  describe "[]" do
+  describe "#[]" do
 
     it "should return the configuration value" do
-      @configuration[:test].should == "test value"
+      @configuration[:name].should == :test_storage
     end
 
   end
 
-  describe "values_at" do
+  describe "#values_at" do
 
     it "should return multiple configuration values" do
-      @configuration.values_at(:adapter, :test).should == [ "fake_adapter", "test value" ]
+      @configuration.values_at(:adapter, :name).should == [ :test, :test_storage ]
     end
 
   end
 
-  describe "views" do
+  describe "#self.configure" do
+
+    before :each do
+      @block = Proc.new { }
+      @configuration = { :storage => { :name => :test } }
+      Configure.stub :process => @configuration
+    end
+
+    it "should pass the given block to Configure.process along with the configuration schema" do
+      Configure.should_receive(:process).with(described_class::SCHEMA, &@block).and_return(@configuration)
+      described_class.configure &@block
+    end
+
+  end
+
+  describe "#self.views" do
 
     it "should return a hash including class views" do
       view = @configuration.views[:test_object_class_view]
       view.should be_instance_of(described_class::View::Class)
-      view.class_name.should == "Object"
+      view.class_name.should == Object
     end
 
     it "should return a hash including map reduce views" do
@@ -77,7 +113,7 @@ describe GOM::Storage::Configuration do
     end
 
     it "should raise a #{NotImplementedError} if the view type is invalid" do
-      @configuration["views"]["test_invalid_view"] = { "type" => "invalid" }
+      @configuration["view"] << { :name => "test", :type => "invalid" }
       lambda do
         @configuration.views[:test_invalid_view]
       end.should raise_error(NotImplementedError)
@@ -90,24 +126,7 @@ describe GOM::Storage::Configuration do
 
   end
 
-  describe "read" do
-
-    it "should read the configuration file" do
-      @configuration.should be_instance_of(described_class)
-    end
-
-    it "should initialize the right adapter class" do
-      @configuration.adapter_class.should == @adapter_class
-    end
-
-    it "should create an adapter instance if requested" do
-      @adapter_class.should_receive(:new).with(@configuration).and_return(@adapter)
-      @configuration.adapter.should == @adapter
-    end
-
-  end
-
-  describe "setup_all" do
+  describe "#self.setup_all" do
 
     before :each do
       @configuration.stub(:setup)
@@ -120,7 +139,7 @@ describe GOM::Storage::Configuration do
 
   end
 
-  describe "teardown_all" do
+  describe "#self.teardown_all" do
 
     before :each do
       @configuration.stub(:teardown)
@@ -133,7 +152,7 @@ describe GOM::Storage::Configuration do
 
   end
 
-  describe "default" do
+  describe "#self.default" do
 
     it "should select the first configuration" do
       described_class.default.should == GOM::Storage::Configuration[:test_storage]

@@ -7,11 +7,25 @@ describe GOM::Storage do
     @object = Object.new
   end
 
-  describe "setup" do
+  describe "#self.configure" do
 
     before :each do
-      GOM::Object::Mapping.stub(:clear!)
-      described_class::Configuration.stub(:setup_all)
+      @block = Proc.new { }
+      described_class::Configuration.stub :configure => nil
+    end
+
+    it "should call :configure on the configuration class" do
+      described_class::Configuration.should_receive(:configure).with(&@block)
+      described_class.configure &@block
+    end
+
+  end
+
+  describe "#self.setup" do
+
+    before :each do
+      GOM::Object::Mapping.stub :clear! => nil
+      described_class::Configuration.stub :setup_all => nil
     end
 
     it "should clear the mapping" do
@@ -26,10 +40,10 @@ describe GOM::Storage do
 
   end
 
-  describe "teardown" do
+  describe "#self.teardown" do
 
     before :each do
-      described_class::Configuration.stub(:teardown_all)
+      described_class::Configuration.stub :teardown_all => nil
     end
 
     it "should teardown all storage configurations" do
@@ -39,11 +53,11 @@ describe GOM::Storage do
 
   end
 
-  describe "fetch" do
+  describe "#self.fetch" do
 
     before :each do
       @id = mock GOM::Object::Id
-      GOM::Object::Id.stub(:new).and_return(@id)
+      GOM::Object::Id.stub :new => @id
 
       @fetcher = mock GOM::Storage::Fetcher, :object => @object
       described_class::Fetcher.stub(:new).and_return(@fetcher)
@@ -65,19 +79,19 @@ describe GOM::Storage do
 
     it "should return nil if nil is given" do
       described_class::Fetcher.should_receive(:new).with(nil).and_return(@fetcher)
-      @fetcher.stub(:object).and_return(nil)
+      @fetcher.stub :object => nil
 
       described_class.fetch(nil).should be_nil
     end
 
   end
 
-  describe "store" do
+  describe "#self.store" do
 
     before :each do
       @storage_name = "another_test_storage"
       @saver = mock described_class::Saver, :perform => nil
-      described_class::Saver.stub(:new).and_return(@saver)
+      described_class::Saver.stub :new => @saver
     end
 
     it "should initialize the saver correctly" do
@@ -92,14 +106,14 @@ describe GOM::Storage do
 
   end
 
-  describe "remove" do
+  describe "#self.remove" do
 
     before :each do
       @id = mock GOM::Object::Id
-      GOM::Object::Id.stub(:new).and_return(@id)
+      GOM::Object::Id.stub :new => @id
 
       @remover = mock described_class::Remover, :perform => nil
-      described_class::Remover.stub(:new).and_return(@remover)
+      described_class::Remover.stub :new => @remover
     end
 
     it "should initialize the remover correctly" do
@@ -120,11 +134,11 @@ describe GOM::Storage do
 
   end
 
-  describe "count" do
+  describe "#self.count" do
 
     before :each do
       @counter = mock described_class::Counter, :perform => 1
-      described_class::Counter.stub(:new).and_return(@counter)
+      described_class::Counter.stub :new => @counter
     end
 
     it "should initialize the counter" do
@@ -139,7 +153,7 @@ describe GOM::Storage do
 
   end
 
-  describe "collection" do
+  describe "#self.collection" do
 
     before :each do
       @collection = mock GOM::Object::Collection

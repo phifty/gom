@@ -1,15 +1,29 @@
 require 'yaml'
+require 'configure'
 
 # Stores all information to configure a storage.
 class GOM::Storage::Configuration
 
   autoload :View, File.join(File.dirname(__FILE__), "configuration", "view")
 
-  attr_reader :name
+  SCHEMA = Configure::Schema.build{
+    only :storage
+    nested {
+      storage {
+        not_nil :name, :adapter
+        nested {
+          view {
+            not_nil :name, :type
+          }
+        }
+      }
+    }
+  }.freeze
+
   attr_reader :hash
 
-  def initialize(name, hash)
-    @name, @hash = name, { }
+  def initialize(hash)
+    @hash = { }
     hash.each{ |key, value| @hash[key.to_sym] = value }
   end
 
@@ -20,6 +34,10 @@ class GOM::Storage::Configuration
   def teardown
     adapter.teardown
     clear_adapter
+  end
+
+  def name
+    @hash[:name]
   end
 
   def adapter
@@ -41,7 +59,8 @@ class GOM::Storage::Configuration
   def views
     @views ||= begin
       result = { }
-      (self["views"] || { }).each do |name, hash|
+      [ @hash[:view] ].flatten.compact.each do |hash|
+        name = hash[:name]
         result[name.to_sym] = self.class.view hash
       end
       result
@@ -54,26 +73,28 @@ class GOM::Storage::Configuration
     @adapter, @adapter_class = nil, nil
   end
 
+  def self.configure(&block)
+    @configurations = { }
+    configurations = Configure.process SCHEMA, &block
+    [ configurations[:storage] ].flatten.compact.each do |hash|
+      name = hash[:name]
+      @configurations[name.to_sym] = self.new hash
+    end
+  end
+
   def self.view(hash)
-    type = hash["type"]
+    type = hash[:type]
     method_name = :"#{type}_view"
     raise NotImplementedError, "the view type '#{type}' doesn't exists" unless self.respond_to?(method_name)
     self.send method_name, hash
   end
 
   def self.class_view(hash)
-    View::Class.new hash["class"]
+    View::Class.new hash[:model_class]
   end
 
   def self.map_reduce_view(hash)
-    View::MapReduce.new *hash.values_at("map", "reduce")
-  end
-
-  def self.read(file_name)
-    @configurations = { }
-    YAML::load_file(file_name).each do |name, values|
-      @configurations[name.to_sym] = self.new name, values
-    end
+    View::MapReduce.new *hash.values_at(:map_function, :reduce_function)
   end
 
   def self.setup_all

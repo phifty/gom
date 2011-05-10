@@ -14,6 +14,10 @@ module GOM::Storage
   # This error can be thrown by an adapter if it's doesn't support write operations
   class ReadOnlyError < StandardError; end
 
+  def self.configure(&block)
+    Configuration.configure &block
+  end
+
   def self.setup
     GOM::Object::Mapping.clear!
     Configuration.setup_all
