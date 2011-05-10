@@ -37,7 +37,7 @@ class GOM::Storage::Configuration
   end
 
   def name
-    @hash[:name]
+    @hash[:name].to_s
   end
 
   def adapter
