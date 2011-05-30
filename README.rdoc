@@ -8,6 +8,8 @@ is plugged-in via an adapter interface. Currently, the following adapters are pr
 * filesystem - http://github.com/phifty/gom-filesystem-adapter
 * couchdb - http://github.com/phifty/gom-couchdb-adapter
 
+http://travis-ci.org/phifty/gom.png
+
 == Configuration
 
 At the beginning of your program the storage configuration should be done with the <tt>GOM::Storage.configure</tt>

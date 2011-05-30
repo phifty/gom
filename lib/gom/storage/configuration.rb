@@ -13,7 +13,7 @@ class GOM::Storage::Configuration
         not_nil :name, :adapter
         nested {
           view {
-            not_nil :name, :adapter_type
+            not_nil :name, :kind
           }
         }
       }
@@ -83,9 +83,9 @@ class GOM::Storage::Configuration
   end
 
   def self.view(hash)
-    type = hash[:adapter_type]
-    method_name = :"#{type}_view"
-    raise NotImplementedError, "the view type '#{type}' doesn't exists" unless self.respond_to?(method_name)
+    kind = hash[:kind]
+    method_name = :"#{kind}_view"
+    raise NotImplementedError, "the view kind '#{kind}' doesn't exists" unless self.respond_to?(method_name)
     self.send method_name, hash
   end
 

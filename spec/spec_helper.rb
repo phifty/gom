@@ -12,12 +12,12 @@ GOM::Storage.configure {
     adapter :fake_adapter
     view {
       name :test_object_class_view
-      adapter_type :class
+      kind :class
       model_class Object
     }
     view {
       name :test_map_view
-      adapter_type :map_reduce
+      kind :map_reduce
       map_function "function(document) { }"
       reduce_function "function(key, values) { }"
     }
