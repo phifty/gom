@@ -1,5 +1,6 @@
 source :rubygems
 
+gem "rake", "0.9.0"
 gem "configure", ">= 0.3.0"
 
 group :development do
