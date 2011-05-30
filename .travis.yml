@@ -6,3 +6,4 @@ rvm:
   - rbx
   - ree
   - jruby
+script: "bundle exec rake spec spec:acceptance"
