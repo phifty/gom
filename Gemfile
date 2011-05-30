@@ -1,3 +1,4 @@
+source :rubygems
 
 gem "configure", ">= 0.3.0"
 
