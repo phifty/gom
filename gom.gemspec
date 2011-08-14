@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |specification|
   specification.name              = "gom"
-  specification.version           = "0.4.1"
+  specification.version           = "0.4.2"
   specification.date              = "2011-05-30"
 
   specification.authors           = [ "Philipp Brüll" ]
