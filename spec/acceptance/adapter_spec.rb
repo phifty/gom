@@ -9,10 +9,11 @@ describe "adapter" do
   describe "setup" do
 
     it "should raise a #{GOM::Storage::AdapterNotFoundError} if no adapter of that name is registered" do
-      GOM::Storage::Configuration[:test_storage].hash[:adapter] = "invalid"
+      GOM::Storage::Configuration[:test_storage].hash[:adapter] = :invalid
       lambda do
         GOM::Storage.setup
       end.should raise_error(GOM::Storage::AdapterNotFoundError)
+      GOM::Storage::Configuration[:test_storage].hash[:adapter] = :fake_adapter
     end
 
   end
