@@ -143,6 +143,30 @@ shared_examples_for "an adapter connected to a stateful storage" do
 
   end
 
+  describe "fetching a property collection" do
+
+    before :each do
+      GOM::Storage.store @object, :test_storage
+    end
+
+    after :each do
+      GOM::Storage.remove @related_object
+      GOM::Storage.remove @object
+    end
+
+    it "should provide a collection of the property view" do
+      collection = GOM::Storage.collection :test_storage, :test_property_view
+      collection.should be_instance_of(GOM::Object::Collection)
+    end
+
+    it "should provide a collection that filters the objects by the given conditions" do
+      collection = GOM::Storage.collection :test_storage, :test_property_view
+      collection.map(&:number) == [ 16 ]
+      collection.map(&:class).uniq.should == [ GOM::Spec::Object ]
+    end
+
+  end
+
   describe "fetching a class collection" do
 
     before :each do

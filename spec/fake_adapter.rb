@@ -1,6 +1,36 @@
 
 class FakeAdapter < GOM::Storage::Adapter
 
+  class PropertyCollectionFetcher
+
+    def initialize(store, storage_name, filter, properties)
+      @store, @storage_name, @filter, @properties = store, storage_name, filter, properties
+    end
+
+    def drafts
+      drafts = [ ]
+      @store.each do |object_id, draft|
+        match = true
+        (@filter || { }).each do |property_name, condition|
+          condition_kind, condition_value = *condition
+          match &&= case condition_kind
+            when :equals
+              property_name == :model_class ?
+                draft.class_name == condition_value :
+                draft.properties[property_name] == condition_value
+            when :greater_than
+              draft.properties[property_name] > condition_value
+            else
+              raise ArgumentError, "condition kind #{condition_kind} is not implemented"
+          end
+        end
+        drafts << draft if match
+      end
+      drafts
+    end
+
+  end
+
   class ClassCollectionFetcher
 
     def initialize(store, storage_name, class_name)
@@ -77,7 +107,10 @@ class FakeAdapter < GOM::Storage::Adapter
 
   def collection(view_name)
     raise GOM::Storage::Adapter::NoSetupError unless @store
+    view = configuration.views[view_name]
     case view_name.to_sym
+      when :test_property_view
+        GOM::Object::Collection.new PropertyCollectionFetcher.new(@store, configuration.name, view.filter, view.properties), configuration.name
       when :test_object_class_view
         GOM::Object::Collection.new ClassCollectionFetcher.new(@store, configuration.name, "GOM::Spec::Object"), configuration.name
       when :test_map_view

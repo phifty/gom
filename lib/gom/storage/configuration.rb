@@ -97,6 +97,10 @@ class GOM::Storage::Configuration
     View::MapReduce.new *hash.values_at(:map_function, :reduce_function)
   end
 
+  def self.property_view(hash)
+    View::Property.new *hash.values_at(:filter, :properties)
+  end
+
   def self.setup_all
     @configurations.values.each do |configuration|
       configuration.setup

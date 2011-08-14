@@ -12,6 +12,14 @@ describe GOM::Storage::Configuration do
         name :test_storage
         adapter :test
         view {
+          name :test_property_view
+          kind :property
+          filter {
+            model_class :equals, "Object"
+          }
+          properties :model_class, :number
+        }
+        view {
           name :test_object_class_view
           kind :class
           model_class Object
@@ -98,6 +106,13 @@ describe GOM::Storage::Configuration do
   end
 
   describe "#self.views" do
+
+    it "should return a hash including property views" do
+      view = @configuration.views[:test_property_view]
+      view.should be_instance_of(described_class::View::Property)
+      view.filter.should == { :model_class => [ :equals, "Object" ] }
+      view.properties.should == [ :model_class, :number ]
+    end
 
     it "should return a hash including class views" do
       view = @configuration.views[:test_object_class_view]

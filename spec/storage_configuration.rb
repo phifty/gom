@@ -5,6 +5,15 @@ GOM::Storage.configure {
     name :test_storage
     adapter :fake_adapter
     view {
+      name :test_property_view
+      kind :property
+      filter {
+        model_class :equals, "GOM::Spec::Object"
+        number :greater_than, 13
+      }
+      properties :number
+    }
+    view {
       name :test_object_class_view
       kind :class
       model_class Object
