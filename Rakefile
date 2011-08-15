@@ -2,7 +2,7 @@ require 'rubygems'
 gem 'rspec'
 gem 'reek'
 require 'rspec'
-require 'rake/rdoctask'
+require 'rdoc/task'
 require 'rspec/core/rake_task'
 require 'reek/rake/task'
 
