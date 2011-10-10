@@ -5,6 +5,10 @@ GOM::Storage.configure {
     name :test_storage
     adapter :fake_adapter
     view {
+      name :test_all_view
+      kind :all
+    }
+    view {
       name :test_property_view
       kind :property
       filter {

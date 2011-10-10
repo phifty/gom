@@ -89,6 +89,10 @@ class GOM::Storage::Configuration
     self.send method_name, hash
   end
 
+  def self.all_view(hash)
+    View::All.new
+  end
+
   def self.class_view(hash)
     View::Class.new hash[:model_class]
   end

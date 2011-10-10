@@ -1,6 +1,18 @@
 
 class FakeAdapter < GOM::Storage::Adapter
 
+  class AllCollectionFetcher
+
+    def initialize(store, storage_name)
+      @store, @storage_name = store, storage_name
+    end
+
+    def drafts
+      @store.values
+    end
+
+  end
+
   class PropertyCollectionFetcher
 
     def initialize(store, storage_name, filter, properties)
@@ -109,6 +121,8 @@ class FakeAdapter < GOM::Storage::Adapter
     raise GOM::Storage::Adapter::NoSetupError unless @store
     view = configuration.views[view_name]
     case view_name.to_sym
+      when :test_all_view
+        GOM::Object::Collection.new AllCollectionFetcher.new(@store, configuration.name), configuration.name
       when :test_property_view
         GOM::Object::Collection.new PropertyCollectionFetcher.new(@store, configuration.name, view.filter, view.properties), configuration.name
       when :test_object_class_view

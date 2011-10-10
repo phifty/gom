@@ -66,6 +66,20 @@ shared_examples_for "a read-only adapter connected to a stateless storage" do
 
   end
 
+  describe "fetching an all collection" do
+
+    it "should return a collection" do
+      collection = GOM::Storage.collection :test_storage, :test_all_view
+      collection.should be_instance_of(GOM::Object::Collection)
+    end
+
+    it "should return a collection that contains all objects of the database" do
+      collection = GOM::Storage.collection :test_storage, :test_all_view
+      collection.size.should == 3
+    end
+
+  end
+
   describe "fetching a class collection" do
 
     it "should return a collection" do
@@ -75,7 +89,7 @@ shared_examples_for "a read-only adapter connected to a stateless storage" do
 
     it "should return a collection that contains all object of class Object" do
       collection = GOM::Storage.collection :test_storage, :test_object_class_view
-      collection.size > 0
+      collection.size.should > 0
       collection.each do |object|
         [ 5, 7 ].should include(object.number)
       end
