@@ -16,9 +16,11 @@ At the beginning of your program the storage configuration should be done with t
 command.
 
   GOM::Storage.configure {
-    name :storage_name
-    adapter :filesystem
-    directory "/var/project-name/data"
+    storage {
+      name :storage_name
+      adapter :filesystem
+      directory "/var/project-name/data"
+    }
   }
 
 Look at the adapter pages to see the adapter-specific configuration values.
@@ -126,13 +128,15 @@ There views simply provides a collection of all object of a specified class. The
 configuration.
 
   GOM::Storage.configure {
-    name :storage_name
-    adapter :filesystem
-    directory "/var/project-name/data"
-    view {
-      name :users
-      type :class
-      model_class User
+    storage {
+      name :storage_name
+      adapter :filesystem
+      directory "/var/project-name/data"
+      view {
+        name :users
+        type :class
+        model_class User
+      }
     }
   }
 
@@ -148,23 +152,25 @@ array.
 These views are also defined in the storage configuration.
 
   GOM::Storage.configure {
-    name :storage_name
-    adapter :couchdb
-    view {
-      name :active_user_count
-      type :map_reduce
-      map_function """
-        function(document) {
-          if (document['model_class'] == 'User' && document['active']) {
-            emit(document['_id'], 1);
+    storage {
+      name :storage_name
+      adapter :couchdb
+      view {
+        name :active_user_count
+        type :map_reduce
+        map_function """
+          function(document) {
+            if (document['model_class'] == 'User' && document['active']) {
+              emit(document['_id'], 1);
+            }
           }
-        }
-      """
-      reduce_function """
-        function(keys, values, rereduce) {
-          return sum(values);
-        }
-      """
+        """
+        reduce_function """
+          function(keys, values, rereduce) {
+            return sum(values);
+          }
+        """
+      }
     }
   }
 
@@ -178,18 +184,20 @@ If no <tt>reduce</tt> method is given, <tt>GOM</tt> will try to map the fetched 
 definition would be...
 
   GOM::Storage.configure {
-    name :storage_name
-    adapter :couchdb
-    view {
-      name :active_users
-      type :map_reduce
-      map_function """
-        function(document) {
-          if (document['model_class'] == 'User') {
-            emit(document['_id'], null);
+    storage {
+      name :storage_name
+      adapter :couchdb
+      view {
+        name :active_users
+        type :map_reduce
+        map_function """
+          function(document) {
+            if (document['model_class'] == 'User') {
+              emit(document['_id'], null);
+            }
           }
-        }
-      """
+        """
+      }
     }
   }
 
