@@ -64,6 +64,12 @@ describe GOM::Object do
       proxy.object.should == @object
     end
 
+    it "should return a proxy for the given id string" do
+      proxy = GOM::Object.reference "test:12345"
+      proxy.should be_instance_of(GOM::Object::Proxy)
+      proxy.id.should == "test:12345"
+    end
+
     it "should return the proxy if a proxy is given" do
       proxy = GOM::Object::reference @proxy
       proxy.should == @proxy

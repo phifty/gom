@@ -20,8 +20,14 @@ module GOM::Object
     id ? id.storage_name : nil
   end
 
-  def self.reference(object)
-    object.is_a?(GOM::Object::Proxy) ? object : Proxy.new(object)
+  def self.reference(value)
+    if value.is_a?(GOM::Object::Proxy)
+      value
+    elsif value.is_a?(String)
+      Proxy.new Id.new(value)
+    else
+      Proxy.new value
+    end
   end
 
 end
