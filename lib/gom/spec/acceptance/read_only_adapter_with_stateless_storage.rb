@@ -75,7 +75,7 @@ shared_examples_for "a read-only adapter connected to a stateless storage" do
 
     it "should return a collection that contains all objects of the database" do
       collection = GOM::Storage.collection :test_storage, :test_all_view
-      collection.size.should == 3
+      collection.size.should == 2
     end
 
   end
