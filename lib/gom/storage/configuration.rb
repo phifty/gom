@@ -105,6 +105,10 @@ class GOM::Storage::Configuration
     View::Property.new *hash.values_at(:filter, :properties)
   end
 
+  def self.search_view(hash)
+    View::Search.new hash[:model_class]
+  end
+
   def self.setup_all
     @configurations.values.each do |configuration|
       configuration.setup
