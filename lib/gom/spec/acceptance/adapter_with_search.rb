@@ -12,7 +12,7 @@ shared_examples_for "an adapter with search view" do
   before :each do
     @object_one = GOM::Spec::Object.new
     @object_one.number = 11
-    @object_one.instance_variable_set :@nested, { :test => "value" }
+    @object_one.nested_object = [ { :test => "value" } ]
 
     @object_two = GOM::Spec::Object.new
     @object_two.number = 24
@@ -41,7 +41,7 @@ shared_examples_for "an adapter with search view" do
       collection.size.should == 1
       collection.map(&:class).should == [ GOM::Spec::Object ]
       collection.map(&:number).should == [ 11 ]
-      collection.map{ |object| object.instance_variable_get :@nested }.should == [ { :test => "value" } ]
+      collection.map(&:nested_object).should == [ [ { :test => "value" } ] ]
     end
 
   end
