@@ -55,12 +55,12 @@ To store an object just pass it to <tt>GOM::Storage.store</tt>.
 
   GOM::Storage.store book, :storage_name
 
-The storage name doesn't have to be specified. If it's missing, the object's previously use storage or the default
+The storage name doesn't has to be specified. If it's missing, the object's previously used storage or the default
 storage is used.
 
 There is no base class needed for your model class. GOM inspects your object, reads all the instance variables and
-passes the values to specified store adapter. The first time an object is stored, an id is generated and assigned to
-the object. This id an be determined by calling <tt>GOM::Object.id</tt>.
+passes the values to the specified storage adapter. The first time an object is stored, an id is generated and assigned to
+the object. This id can be determined by calling <tt>GOM::Object.id</tt>.
 
   book_id = GOM::Object.id book
   # book_id => "storage_name:1234..."
@@ -71,8 +71,8 @@ Once an object is stored, it can be easily brought back to life by using it's id
 
   book = GOM::Storage.fetch book_id
 
-The storage name is encoded (prefixed) in the id and don't have to be specified. The classname of the object was also
-saved during the storage and the fetch instantiate a new object using the constructor. If the constructor requires
+The storage name is encoded (prefixed) in the id and doesn't has to be specified. The classname of the object was also
+saved during the storage and the <tt>fetch</tt> method instantiates a new object using the constructor. If the constructor requires
 arguments, <tt>nil</tt> will be passed for each of them. The internal state (the instance variables) will be
 overwritten anyway.
 
@@ -124,7 +124,7 @@ of results at runtime. There are several kinds of views.
 
 === Class views
 
-There views simply provides a collection of all object of a specified class. They are defined at the storage
+There are views simply providing a collection of all objects of a specified class. They are defined at the storage
 configuration.
 
   GOM::Storage.configure {
@@ -174,7 +174,7 @@ These views are also defined in the storage configuration.
     }
   }
 
-The example defined a map/reduce view that results in a single row with the count of all active users. This row can be
+The example defines a map/reduce view that results in a single row with the count of all active users. This row can be
 fetched by...
 
   rows = GOM::Storage.collection :storage_name, :active_user_count
@@ -208,7 +208,7 @@ definition would be...
 == Development
 
 Development has been done test-driven and the code follows at most the Clean Code paradigms. Code smells has been
-removed by using the reek[http://github.com/kevinrutherford/reek] code smell detector.
+removed by using the reek[http://github.com/troessner/reek] code smell detector.
 
 This project is still experimental and under development. Any bug report and contribution is welcome!
 
